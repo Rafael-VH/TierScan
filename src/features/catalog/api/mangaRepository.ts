@@ -9,6 +9,7 @@ type SupabaseChapterRow = {
   title: Partial<LocalizedText> | null;
   pages: number | null;
   page_images: string[] | null;
+  languages?: Locale[] | null;
   updated_at: string | null;
   progress: number | null;
 };
@@ -76,6 +77,7 @@ function mapChapter(row: SupabaseChapterRow): Chapter {
     }),
     pages: row.pages ?? 1,
     pageImages: row.page_images ?? undefined,
+    languages: row.languages ?? undefined,
     updatedAt: row.updated_at ?? new Date().toISOString().slice(0, 10),
     progress: row.progress ?? 0,
   };

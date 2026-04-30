@@ -16,6 +16,7 @@ export interface Chapter {
   title: LocalizedText;
   pages: number;
   pageImages?: string[];
+  languages?: Locale[];
   updatedAt: string;
   progress: number;
 }

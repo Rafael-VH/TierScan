@@ -127,6 +127,21 @@ export function AppShell() {
     return items.sort((a, b) => a.ranking - b.ranking).slice(0, 5);
   }, [catalog, spotlightMode]);
 
+  const relatedMangas = useMemo(() => {
+    return catalog
+      .filter((manga) => manga.id !== selectedManga.id)
+      .map((manga) => ({
+        manga,
+        score: manga.genres.filter((genre) =>
+          selectedManga.genres.includes(genre),
+        ).length,
+      }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score || a.manga.ranking - b.manga.ranking)
+      .map((item) => item.manga)
+      .slice(0, 10);
+  }, [catalog, selectedManga]);
+
   /* ---- handlers ---- */
 
   const handleMangaSelect = (id: string) => {
@@ -257,11 +272,14 @@ export function AppShell() {
 
         {view === "details" && (
           <MangaDetails
+            key={selectedManga.id}
             copy={copy}
             locale={locale}
             manga={selectedManga}
+            relatedMangas={relatedMangas}
             onBack={() => setView("home")}
             onReadChapter={handleReadChapter}
+            onSelectManga={handleMangaSelect}
           />
         )}
 
