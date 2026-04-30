@@ -66,7 +66,7 @@ export function TopNavigation({
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0d1424]/85 backdrop-blur-xl">
       <div
         ref={containerRef}
-        className="mx-auto flex h-16 max-w-[1480px] items-center gap-3 px-4 sm:px-6 lg:px-8"
+        className="mx-auto flex h-14 max-w-[1480px] items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6 lg:px-8"
       >
         {/* Drawer trigger */}
         <button
@@ -90,7 +90,7 @@ export function TopNavigation({
         <button
           type="button"
           onClick={onHomeClick}
-          className="text-base font-black tracking-tight text-white"
+          className="text-sm font-black tracking-tight text-white sm:text-base"
         >
           {copy.appName}
         </button>
@@ -159,7 +159,7 @@ export function TopNavigation({
           type="button"
           aria-label="Search"
           onClick={() => setSearchOpen((v) => !v)}
-          className="ml-auto grid h-10 w-10 place-items-center rounded-lg text-slate-300 transition hover:bg-white/10 hover:text-white md:hidden"
+          className="ml-auto grid h-9 w-9 place-items-center rounded-lg text-slate-300 transition hover:bg-white/10 hover:text-white md:hidden"
         >
           <svg
             className="h-5 w-5"

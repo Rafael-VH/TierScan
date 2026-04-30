@@ -53,29 +53,29 @@ export function HomeSlider({
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[length:72px_72px]" />
       <div className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-[#090e1b] to-transparent" />
 
-      <div className="mx-auto grid max-w-[1480px] items-center gap-6 px-4 py-10 sm:px-6 md:grid-cols-[180px_minmax(0,1fr)] md:py-12 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-8">
+      <div className="mx-auto grid max-w-[1480px] grid-cols-[112px_minmax(0,1fr)] items-center gap-4 px-4 py-6 sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-5 sm:px-6 sm:py-8 md:grid-cols-[180px_minmax(0,1fr)] md:py-10 lg:grid-cols-[210px_minmax(0,1fr)] lg:px-8">
         <button
           type="button"
           onClick={() => onSelect(activeManga.id)}
-          className="mx-auto w-36 animate-float-slow transition hover:scale-[1.02] active:scale-[0.98] sm:w-44 md:mx-0 lg:w-52"
+          className="mx-auto w-28 animate-float-slow transition hover:scale-[1.02] active:scale-[0.98] sm:w-36 md:mx-0 md:w-44 lg:w-52"
           aria-label={activeManga.title}
         >
           <CoverArt manga={activeManga} compact />
         </button>
 
-        <div className="max-w-3xl text-center md:text-left">
-          <p className="text-[11px] font-black uppercase tracking-[0.34em] text-amber-200/90">
+        <div className="min-w-0 max-w-3xl text-left">
+          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-200/90 sm:text-[11px]">
             {label}
           </p>
 
-          <h1 className="mt-3 line-clamp-2 text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl">
+          <h1 className="mt-2 line-clamp-2 text-xl font-black leading-tight tracking-tight text-white sm:text-2xl md:text-3xl lg:text-4xl">
             {activeManga.title}
           </h1>
-          <p className="mt-1 text-sm font-semibold text-slate-400">
+          <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-400 sm:text-sm">
             {activeManga.altTitle}
           </p>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-1.5 md:justify-start">
+          <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4">
             {[
               activeManga.origin,
               activeManga.status[locale],
@@ -90,15 +90,15 @@ export function HomeSlider({
             ))}
           </div>
 
-          <p className="mt-4 line-clamp-3 max-w-2xl text-sm leading-6 text-slate-300">
+          <p className="mt-3 hidden max-w-2xl text-sm leading-6 text-slate-300 sm:line-clamp-2 md:line-clamp-3">
             {activeManga.synopsis[locale]}
           </p>
 
-          <div className="mt-5 flex flex-col items-center gap-4 md:items-start">
+          <div className="mt-4 flex flex-col items-start gap-3 sm:mt-5 sm:gap-4">
             <button
               type="button"
               onClick={() => onSelect(activeManga.id)}
-              className="rounded-xl bg-amber-300 px-5 py-2.5 text-sm font-black uppercase tracking-wide text-slate-950 transition hover:-translate-y-0.5 hover:bg-amber-200"
+              className="rounded-xl bg-amber-300 px-4 py-2 text-xs font-black uppercase tracking-wide text-slate-950 transition hover:-translate-y-0.5 hover:bg-amber-200 sm:px-5 sm:py-2.5 sm:text-sm"
             >
               {copy.details}
             </button>

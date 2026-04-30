@@ -203,7 +203,7 @@ export function AppShell() {
         }}
       />
 
-      <main className={view === "home" ? "pt-16" : ""}>
+      <main className={view === "home" ? "pt-14 sm:pt-16" : ""}>
         {view === "home" && (
           <div className="animate-reader-in">
             <HomeSlider
@@ -218,8 +218,8 @@ export function AppShell() {
               onSelect={handleMangaSelect}
             />
 
-            <div className="mx-auto grid max-w-[1480px] gap-12 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-14 lg:px-8 xl:gap-16">
-              <div className="space-y-20">
+            <div className="mx-auto grid max-w-[1480px] gap-10 px-4 py-8 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12 lg:px-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:gap-14">
+              <div className="space-y-12 sm:space-y-14 lg:space-y-16">
                 {activeFilter && (
                   <div className="flex items-center justify-between gap-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-5 py-4">
                     <p className="text-sm font-bold text-amber-100">

@@ -25,15 +25,37 @@ export function CoverArt({ manga, className, compact = false }: CoverArtProps) {
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,rgba(255,255,255,0.48),transparent_18%),radial-gradient(circle_at_82%_12%,rgba(255,255,255,0.22),transparent_14%),linear-gradient(180deg,transparent,rgba(2,6,23,0.7))]" />
       <div className="absolute -right-8 top-8 h-40 w-40 rounded-full border border-white/20 bg-white/10 blur-[1px] transition-transform duration-700 group-hover:scale-110" />
-      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-        <p className="max-w-[12rem] text-balance text-sm font-black uppercase leading-tight tracking-tight text-white drop-shadow-lg sm:text-base">
+      <div
+        className={cn(
+          "absolute bottom-0 left-0 right-0",
+          compact ? "p-2.5 sm:p-3" : "p-3 sm:p-4",
+        )}
+      >
+        <p
+          className={cn(
+            "max-w-[12rem] text-balance font-black uppercase leading-tight tracking-tight text-white drop-shadow-lg",
+            compact ? "text-[11px] sm:text-xs" : "text-sm sm:text-base",
+          )}
+        >
           {manga.title}
         </p>
-        <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70">
+        <p
+          className={cn(
+            "font-semibold uppercase tracking-[0.22em] text-white/70",
+            compact ? "mt-1 text-[9px]" : "mt-2 text-[10px]",
+          )}
+        >
           {manga.origin}
         </p>
       </div>
-      <div className="absolute left-3 top-3 rounded-full bg-black/35 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white/85 backdrop-blur">
+      <div
+        className={cn(
+          "absolute rounded-full bg-black/35 font-bold uppercase tracking-wide text-white/85 backdrop-blur",
+          compact
+            ? "left-2 top-2 px-1.5 py-0.5 text-[9px]"
+            : "left-3 top-3 px-2 py-1 text-[10px]",
+        )}
+      >
         {manga.safety}
       </div>
     </div>

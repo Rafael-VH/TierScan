@@ -24,11 +24,11 @@ export function LibraryShelf({
 }: LibraryShelfProps) {
   return (
     <section className="scroll-mt-24">
-      <div className="mb-6 flex items-end justify-between gap-4 border-b border-white/10 pb-4">
+      <div className="mb-4 flex items-end justify-between gap-4 border-b border-white/10 pb-3 sm:mb-5 sm:pb-4">
         <div>
           <div className="flex items-center gap-3">
-            <span className="block h-6 w-1 rounded-full bg-amber-300" />
-            <h2 className="text-xl font-black tracking-tight text-white sm:text-2xl">
+            <span className="block h-5 w-1 rounded-full bg-amber-300 sm:h-6" />
+            <h2 className="text-lg font-black tracking-tight text-white sm:text-xl lg:text-2xl">
               {title}
             </h2>
           </div>
@@ -49,7 +49,7 @@ export function LibraryShelf({
           {copy.noResults}
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 sm:gap-x-5 md:grid-cols-4 md:gap-x-6 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(128px,1fr))] gap-x-4 gap-y-6 sm:grid-cols-[repeat(auto-fill,minmax(145px,1fr))] md:gap-x-5 lg:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(155px,1fr))]">
           {mangas.map((manga) => (
             <button
               key={manga.id}
@@ -66,7 +66,7 @@ export function LibraryShelf({
                   selectedId === manga.id && "ring-2 ring-amber-300",
                 )}
               />
-              <p className="mt-3 line-clamp-2 text-sm font-black leading-tight text-white transition group-hover:text-amber-100">
+              <p className="mt-2.5 line-clamp-2 text-xs font-black leading-tight text-white transition group-hover:text-amber-100 sm:text-sm">
                 {manga.title}
               </p>
               <p className="mt-1 text-xs font-semibold text-slate-400">

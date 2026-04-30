@@ -78,7 +78,7 @@ export function MangaDetails({
       </button>
 
       {/* Hero Background */}
-      <div className="relative h-40 overflow-hidden sm:h-48">
+      <div className="relative h-28 overflow-hidden sm:h-36 lg:h-40">
         <div
           className="absolute inset-0 opacity-50"
           style={{
@@ -91,12 +91,12 @@ export function MangaDetails({
       {/* Main Content Container */}
       <div className="mx-auto max-w-[1600px] px-4 pb-20 sm:px-6 lg:px-8">
         {/* HEADER SECTION - Full Width */}
-        <div className="-mt-24 sm:-mt-28">
+        <div className="-mt-14 sm:-mt-16 lg:-mt-20">
           {/* Top Row: Cover + Basic Info + Stats */}
-          <div className="grid gap-6 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr]">
+          <div className="grid gap-5 lg:grid-cols-[240px_1fr] xl:grid-cols-[280px_1fr]">
             {/* LEFT: Cover Image Container */}
-            <div className="mx-auto w-44 sm:mx-0 sm:w-52 lg:w-64">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3 shadow-2xl shadow-black/40">
+            <div className="mx-auto w-36 sm:mx-0 sm:w-44 lg:w-52 xl:w-56">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-2.5 shadow-2xl shadow-black/40 sm:p-3">
                 <CoverArt manga={manga} compact />
               </div>
             </div>
@@ -104,7 +104,7 @@ export function MangaDetails({
             {/* RIGHT: Info Container */}
             <div className="flex flex-col justify-end">
               {/* Title Container */}
-              <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 backdrop-blur-sm">
+              <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 backdrop-blur-sm sm:p-5">
                 {/* Genres Row */}
                 <div className="mb-3 flex flex-wrap gap-1.5">
                   <span className="rounded-md bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-300 ring-1 ring-emerald-400/20">
@@ -124,7 +124,7 @@ export function MangaDetails({
                 </div>
 
                 {/* Title */}
-                <h1 className="text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl">
+                <h1 className="text-xl font-black leading-tight tracking-tight text-white sm:text-2xl lg:text-3xl">
                   {manga.title}
                 </h1>
                 <p className="mt-1 text-sm font-semibold text-slate-400">
@@ -159,7 +159,7 @@ export function MangaDetails({
               </div>
 
               {/* Stats Container */}
-              <div className="mt-4 grid grid-cols-3 gap-3 sm:max-w-md">
+              <div className="mt-3 grid grid-cols-3 gap-2 sm:mt-4 sm:max-w-md sm:gap-3">
                 <StatCard
                   label={copy.rating}
                   value={String(manga.rating)}
@@ -173,9 +173,9 @@ export function MangaDetails({
         </div>
 
         {/* MIDDLE SECTION - Description & Details */}
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className="mt-6 grid gap-5 lg:grid-cols-2 lg:gap-6">
           {/* Description Container */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 lg:p-6">
             <h3 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-slate-500">
               <span className="h-4 w-1 rounded-full bg-amber-300" />
               {copy.status}
@@ -194,7 +194,7 @@ export function MangaDetails({
           </div>
 
           {/* Details Container */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 lg:p-6">
             <h3 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-slate-500">
               <span className="h-4 w-1 rounded-full bg-amber-300" />
               {copy.details}
@@ -219,7 +219,7 @@ export function MangaDetails({
         </div>
 
         {/* BOTTOM SECTION - Tabs & Content */}
-        <div className="mt-10">
+        <div className="mt-8 lg:mt-10">
           {/* Tabs Header */}
           <div className="mb-6 flex flex-col gap-4 border-b border-white/10 pb-4 md:flex-row md:items-end md:justify-between">
             <div className="flex overflow-x-auto scrollbar-soft">
@@ -323,10 +323,10 @@ function StatCard({
   accent?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-center transition hover:bg-white/[0.06]">
+    <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-center transition hover:bg-white/[0.06] sm:p-3 lg:p-4">
       <span
         className={cn(
-          "block text-xl font-black sm:text-2xl",
+          "block text-base font-black sm:text-xl lg:text-2xl",
           accent ? "text-amber-300" : "text-white",
         )}
       >

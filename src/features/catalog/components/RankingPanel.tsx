@@ -45,7 +45,7 @@ export function RankingPanel({
   }, [activeTab, mangas]);
 
   return (
-    <aside className="lg:sticky lg:top-24 lg:self-start">
+    <aside className="lg:sticky lg:top-20 lg:self-start">
       <div className="border-t border-white/10 pt-4 lg:border-t-0 lg:pt-0">
         <div className="mb-4 flex items-center gap-2 overflow-x-auto scrollbar-soft">
           {tabs.map((tab) => (
@@ -65,13 +65,13 @@ export function RankingPanel({
           ))}
         </div>
 
-        <ol className="space-y-4">
+        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
           {rankedMangas.map((manga, index) => (
             <li key={manga.id}>
               <button
                 type="button"
                 onClick={() => onSelect(manga.id)}
-                className="group grid w-full grid-cols-[2rem_3.5rem_minmax(0,1fr)] items-center gap-3 text-left"
+                className="group grid w-full grid-cols-[1.75rem_3rem_minmax(0,1fr)] items-center gap-3 text-left sm:grid-cols-[2rem_3.25rem_minmax(0,1fr)]"
               >
                 <span className="text-center text-sm font-black text-slate-500">
                   {index + 1}
