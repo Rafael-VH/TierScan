@@ -29,7 +29,9 @@ export function CoverArt({ manga, className, compact = false }: CoverArtProps) {
         <p className="max-w-[12rem] text-balance text-sm font-black uppercase leading-tight tracking-tight text-white drop-shadow-lg sm:text-base">
           {manga.title}
         </p>
-        <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70">{manga.origin}</p>
+        <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70">
+          {manga.origin}
+        </p>
       </div>
       <div className="absolute left-3 top-3 rounded-full bg-black/35 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white/85 backdrop-blur">
         {manga.safety}

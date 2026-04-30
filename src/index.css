@@ -60,6 +60,7 @@
 }
 
 @keyframes float-slow {
+
   0%,
   100% {
     transform: translateY(0) rotate(-1deg);
@@ -83,6 +84,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

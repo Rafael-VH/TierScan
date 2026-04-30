@@ -9,7 +9,7 @@ export const languages: Array<{ code: Locale; label: string; short: string }> = 
 ];
 
 const es = {
-  appName: "PyonManga",
+  appName: "TierScan",
   brandLine: "Lector online para manga y manhwa",
   searchPlaceholder: "Buscar titulo, genero o autor",
   library: "Biblioteca",
@@ -47,7 +47,7 @@ export type Copy = typeof es;
 export const translations: Record<Locale, Copy> = {
   es,
   en: {
-    appName: "PyonManga",
+    appName: "TierScan",
     brandLine: "Online reader for manga and manhwa",
     searchPlaceholder: "Search title, genre, or author",
     library: "Library",
@@ -80,7 +80,7 @@ export const translations: Record<Locale, Copy> = {
     announcement: "All chapters are prepared for progressive loading and uninterrupted reading.",
   },
   pt: {
-    appName: "PyonManga",
+    appName: "TierScan",
     brandLine: "Leitor online para manga e manhwa",
     searchPlaceholder: "Buscar titulo, genero ou autor",
     library: "Biblioteca",
@@ -113,7 +113,7 @@ export const translations: Record<Locale, Copy> = {
     announcement: "Todos os capitulos estao prontos para carregamento progressivo e leitura sem interrupcoes.",
   },
   fr: {
-    appName: "PyonManga",
+    appName: "TierScan",
     brandLine: "Lecteur en ligne pour manga et manhwa",
     searchPlaceholder: "Rechercher titre, genre ou auteur",
     library: "Bibliotheque",
@@ -146,7 +146,7 @@ export const translations: Record<Locale, Copy> = {
     announcement: "Tous les chapitres sont prepares pour un chargement progressif et une lecture continue.",
   },
   ja: {
-    appName: "PyonManga",
+    appName: "TierScan",
     brandLine: "Manga to manhwa no online reader",
     searchPlaceholder: "Title, genre, author wo kensaku",
     library: "Library",

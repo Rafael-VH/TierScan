@@ -39,8 +39,12 @@ export function AppShell() {
     });
   }, [locale, query]);
 
-  const selectedManga = mangaCatalog.find((manga) => manga.id === selectedMangaId) ?? mangaCatalog[0];
-  const recentMangas = [...mangaCatalog].sort((a, b) => b.chapters[0].updatedAt.localeCompare(a.chapters[0].updatedAt));
+  const selectedManga =
+    mangaCatalog.find((manga) => manga.id === selectedMangaId) ??
+    mangaCatalog[0];
+  const recentMangas = [...mangaCatalog].sort((a, b) =>
+    b.chapters[0].updatedAt.localeCompare(a.chapters[0].updatedAt),
+  );
 
   const selectManga = (id: string) => {
     setSelectedMangaId(id);
@@ -48,7 +52,9 @@ export function AppShell() {
   };
 
   const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -64,12 +70,19 @@ export function AppShell() {
       />
 
       <main>
-        <HeroSpotlight copy={copy} locale={locale} manga={selectedManga} onRead={() => scrollToSection("reader")} />
+        <HeroSpotlight
+          copy={copy}
+          locale={locale}
+          manga={selectedManga}
+          onRead={() => scrollToSection("reader")}
+        />
 
         <div className="mx-auto grid max-w-[1480px] gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 xl:gap-14">
           <div className="space-y-14">
             <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-slate-300">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-cyan-300/10 text-cyan-200 ring-1 ring-cyan-200/20">AI</span>
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-cyan-300/10 text-cyan-200 ring-1 ring-cyan-200/20">
+                AI
+              </span>
               <p>{copy.announcement}</p>
             </div>
 
@@ -94,7 +107,12 @@ export function AppShell() {
             <ReaderPanel copy={copy} locale={locale} manga={selectedManga} />
           </div>
 
-          <RankingPanel copy={copy} locale={locale} mangas={mangaCatalog} onSelect={selectManga} />
+          <RankingPanel
+            copy={copy}
+            locale={locale}
+            mangas={mangaCatalog}
+            onSelect={selectManga}
+          />
         </div>
       </main>
     </div>

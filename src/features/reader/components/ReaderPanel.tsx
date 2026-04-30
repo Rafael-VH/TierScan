@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import type { DimensionPreset, Locale, Manga, ReadMode } from "@/entities/manga/model";
+import type {
+  DimensionPreset,
+  Locale,
+  Manga,
+  ReadMode,
+} from "@/entities/manga/model";
 import type { Copy } from "@/shared/i18n/translations";
 import { cn } from "@/utils/cn";
 
@@ -27,12 +32,19 @@ export function ReaderPanel({ copy, locale, manga }: ReaderPanelProps) {
   }, [manga]);
 
   const chapter = useMemo(
-    () => manga.chapters.find((item) => item.id === chapterId) ?? manga.chapters[0],
+    () =>
+      manga.chapters.find((item) => item.id === chapterId) ?? manga.chapters[0],
     [chapterId, manga.chapters],
   );
 
-  const pages = mode === "webtoon" ? Array.from({ length: chapter.pages }, (_, index) => index + 1) : [currentPage];
-  const progress = mode === "webtoon" ? chapter.progress : Math.round((currentPage / chapter.pages) * 100);
+  const pages =
+    mode === "webtoon"
+      ? Array.from({ length: chapter.pages }, (_, index) => index + 1)
+      : [currentPage];
+  const progress =
+    mode === "webtoon"
+      ? chapter.progress
+      : Math.round((currentPage / chapter.pages) * 100);
 
   const handleChapterChange = (nextChapterId: string) => {
     setChapterId(nextChapterId);
@@ -40,15 +52,21 @@ export function ReaderPanel({ copy, locale, manga }: ReaderPanelProps) {
   };
 
   const movePage = (direction: -1 | 1) => {
-    setCurrentPage((page) => Math.min(chapter.pages, Math.max(1, page + direction)));
+    setCurrentPage((page) =>
+      Math.min(chapter.pages, Math.max(1, page + direction)),
+    );
   };
 
   return (
     <section id="reader" className="scroll-mt-24">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-black uppercase tracking-[0.28em] text-amber-200">{copy.reader}</p>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">{copy.onlineReader}</h2>
+          <p className="text-sm font-black uppercase tracking-[0.28em] text-amber-200">
+            {copy.reader}
+          </p>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">
+            {copy.onlineReader}
+          </h2>
         </div>
         <p className="text-sm font-semibold text-slate-400">
           {copy.progress}: {progress}%
@@ -98,10 +116,27 @@ export function ReaderPanel({ copy, locale, manga }: ReaderPanelProps) {
         </div>
 
         <div className="bg-[#070b15] px-3 py-6 sm:px-6 lg:px-8">
-          <div className={cn("mx-auto transition-all duration-500", readerWidthByPreset[screenPreset])}>
-            <div className={cn("grid gap-4", mode === "paged" && "place-items-center")}> 
+          <div
+            className={cn(
+              "mx-auto transition-all duration-500",
+              readerWidthByPreset[screenPreset],
+            )}
+          >
+            <div
+              className={cn(
+                "grid gap-4",
+                mode === "paged" && "place-items-center",
+              )}
+            >
               {pages.map((page) => (
-                <ComicPage key={`${chapter.id}-${page}-${mode}`} copy={copy} manga={manga} page={page} totalPages={chapter.pages} paged={mode === "paged"} />
+                <ComicPage
+                  key={`${chapter.id}-${page}-${mode}`}
+                  copy={copy}
+                  manga={manga}
+                  page={page}
+                  totalPages={chapter.pages}
+                  paged={mode === "paged"}
+                />
               ))}
             </div>
 
@@ -142,7 +177,12 @@ interface SegmentedControlProps<T extends string> {
   onChange: (value: T) => void;
 }
 
-function SegmentedControl<T extends string>({ label, options, value, onChange }: SegmentedControlProps<T>) {
+function SegmentedControl<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: SegmentedControlProps<T>) {
   return (
     <div className="grid gap-2">
       <span className="text-sm font-bold text-slate-300">{label}</span>
@@ -154,7 +194,9 @@ function SegmentedControl<T extends string>({ label, options, value, onChange }:
             onClick={() => onChange(option.id)}
             className={cn(
               "rounded-lg px-3 py-2 text-sm font-black transition",
-              value === option.id ? "bg-amber-300 text-slate-950" : "text-slate-300 hover:bg-white/10 hover:text-white",
+              value === option.id
+                ? "bg-amber-300 text-slate-950"
+                : "text-slate-300 hover:bg-white/10 hover:text-white",
             )}
           >
             {option.label}
@@ -204,7 +246,9 @@ function ComicPage({ copy, manga, page, totalPages, paged }: ComicPageProps) {
         </div>
 
         <div>
-          <p className="text-3xl font-black tracking-tight sm:text-5xl">{manga.title}</p>
+          <p className="text-3xl font-black tracking-tight sm:text-5xl">
+            {manga.title}
+          </p>
           <p className="mt-3 text-sm font-bold uppercase tracking-[0.2em] text-white/65">
             {copy.pages} {totalPages}
           </p>
