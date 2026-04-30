@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import type { Locale, Manga } from "@/entities/manga/model";
+import type { Locale, Manga, SpotlightMode } from "@/entities/manga/model";
 import type { Copy } from "@/shared/i18n/translations";
 import { languages } from "@/shared/i18n/translations";
 import { cn } from "@/utils/cn";
@@ -13,6 +13,8 @@ interface SideDrawerProps {
   onLocaleChange: (locale: Locale) => void;
   onSelectGenre: (genre: string) => void;
   onSelectOrigin: (origin: Manga["origin"]) => void;
+  spotlightMode: SpotlightMode;
+  onSpotlightModeChange: (mode: SpotlightMode) => void;
   onHomeClick: () => void;
 }
 
@@ -25,6 +27,8 @@ export function SideDrawer({
   onLocaleChange,
   onSelectGenre,
   onSelectOrigin,
+  spotlightMode,
+  onSpotlightModeChange,
   onHomeClick,
 }: SideDrawerProps) {
   // Lock body scroll while open
@@ -54,6 +58,11 @@ export function SideDrawer({
   }, [catalog]);
 
   const origins: Manga["origin"][] = ["Manga", "Manhwa", "Manhua"];
+  const spotlightOptions: Array<{ id: SpotlightMode; label: string }> = [
+    { id: "reads", label: "Mas leidos" },
+    { id: "new", label: copy.recent },
+    { id: "ranking", label: "Ranking" },
+  ];
 
   return (
     <>
@@ -132,6 +141,31 @@ export function SideDrawer({
             </svg>
             {copy.library}
           </button>
+
+          {/* Spotlight selector */}
+          <h3 className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+            Slider principal
+          </h3>
+          <div className="mb-7 grid gap-2">
+            {spotlightOptions.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => {
+                  onSpotlightModeChange(option.id);
+                  onClose();
+                }}
+                className={cn(
+                  "rounded-xl border px-4 py-3 text-left text-sm font-black transition",
+                  spotlightMode === option.id
+                    ? "border-amber-300/50 bg-amber-300/15 text-amber-100"
+                    : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-amber-300/40 hover:bg-amber-300/10 hover:text-amber-200",
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
 
           {/* Origin filter */}
           <h3 className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">

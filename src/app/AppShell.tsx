@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Locale, Manga } from "@/entities/manga/model";
+import type { Locale, Manga, SpotlightMode } from "@/entities/manga/model";
 import { LibraryShelf } from "@/features/catalog/components/LibraryShelf";
-import { HeroSpotlight } from "@/features/catalog/components/HeroSpotlight";
+import { HomeSlider } from "@/features/catalog/components/HomeSlider";
 import { RankingPanel } from "@/features/catalog/components/RankingPanel";
 import { MangaDetails } from "@/features/catalog/components/MangaDetails";
 import { mangaCatalog } from "@/features/catalog/data/catalog";
@@ -18,12 +18,23 @@ interface ActiveFilter {
   value: string;
 }
 
+function parseMetric(value: string) {
+  const cleanValue = value.trim().toUpperCase();
+  const multiplier = cleanValue.endsWith("M")
+    ? 1_000_000
+    : cleanValue.endsWith("K")
+      ? 1_000
+      : 1;
+  return Number.parseFloat(cleanValue.replace(/[MK]/g, "")) * multiplier;
+}
+
 export function AppShell() {
   const [view, setView] = useState<View>("home");
   const [locale, setLocale] = useState<Locale>("es");
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<ActiveFilter | null>(null);
+  const [spotlightMode, setSpotlightMode] = useState<SpotlightMode>("reads");
   const [catalog, setCatalog] = useState(mangaCatalog);
   const [selectedMangaId, setSelectedMangaId] = useState(mangaCatalog[0].id);
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
@@ -94,6 +105,28 @@ export function AppShell() {
     [filteredMangas],
   );
 
+  const spotlightMangas = useMemo(() => {
+    const items = [...catalog];
+
+    if (spotlightMode === "reads") {
+      return items
+        .sort((a, b) => parseMetric(b.reads) - parseMetric(a.reads))
+        .slice(0, 5);
+    }
+
+    if (spotlightMode === "new") {
+      return items
+        .sort((a, b) =>
+          (b.chapters[0]?.updatedAt ?? b.lastUpdated).localeCompare(
+            a.chapters[0]?.updatedAt ?? a.lastUpdated,
+          ),
+        )
+        .slice(0, 5);
+    }
+
+    return items.sort((a, b) => a.ranking - b.ranking).slice(0, 5);
+  }, [catalog, spotlightMode]);
+
   /* ---- handlers ---- */
 
   const handleMangaSelect = (id: string) => {
@@ -147,6 +180,8 @@ export function AppShell() {
         onLocaleChange={setLocale}
         onSelectGenre={handleSelectGenre}
         onSelectOrigin={handleSelectOrigin}
+        spotlightMode={spotlightMode}
+        onSpotlightModeChange={setSpotlightMode}
         onHomeClick={() => {
           clearFilter();
           goHome();
@@ -156,13 +191,16 @@ export function AppShell() {
       <main className={view === "home" ? "pt-16" : ""}>
         {view === "home" && (
           <div className="animate-reader-in">
-            <HeroSpotlight
+            <HomeSlider
               copy={copy}
               locale={locale}
-              manga={catalog[0] || mangaCatalog[0]}
-              onSelect={() =>
-                handleMangaSelect((catalog[0] || mangaCatalog[0]).id)
+              mangas={
+                spotlightMangas.length > 0
+                  ? spotlightMangas
+                  : [catalog[0] || mangaCatalog[0]]
               }
+              mode={spotlightMode}
+              onSelect={handleMangaSelect}
             />
 
             <div className="mx-auto grid max-w-[1480px] gap-12 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-14 lg:px-8 xl:gap-16">

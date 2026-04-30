@@ -17,8 +17,8 @@ export function CoverArt({ manga, className, compact = false }: CoverArtProps) {
   return (
     <div
       className={cn(
-        "group relative isolate overflow-hidden rounded-xl border border-white/15 bg-slate-900 text-left shadow-2xl shadow-black/30",
-        compact ? "aspect-[3/4]" : "aspect-[5/7]",
+        "group relative isolate aspect-[2/3] overflow-hidden border border-white/15 bg-slate-900 text-left shadow-2xl shadow-black/30",
+        compact ? "rounded-lg" : "rounded-xl",
         className,
       )}
       style={coverStyle}

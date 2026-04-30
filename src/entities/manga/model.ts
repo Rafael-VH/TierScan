@@ -2,6 +2,8 @@ export type Locale = "es" | "en" | "pt" | "fr" | "ja";
 
 export type ReadMode = "webtoon" | "paged";
 
+export type SpotlightMode = "reads" | "new" | "ranking";
+
 
 
 export type PublicationState = "ongoing" | "complete";
