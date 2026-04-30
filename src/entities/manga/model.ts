@@ -2,6 +2,8 @@ export type Locale = "es" | "en" | "pt" | "fr" | "ja";
 
 export type ReadMode = "webtoon" | "paged";
 
+
+
 export type PublicationState = "ongoing" | "complete";
 
 export type LocalizedText = Record<Locale, string>;
@@ -11,6 +13,7 @@ export interface Chapter {
   number: number;
   title: LocalizedText;
   pages: number;
+  pageImages?: string[];
   updatedAt: string;
   progress: number;
 }

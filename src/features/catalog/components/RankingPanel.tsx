@@ -35,7 +35,9 @@ export function RankingPanel({
 
     if (activeTab === "recent") {
       return [...mangas].sort((a, b) =>
-        b.chapters[0].updatedAt.localeCompare(a.chapters[0].updatedAt),
+        (b.chapters[0]?.updatedAt ?? b.lastUpdated).localeCompare(
+          a.chapters[0]?.updatedAt ?? a.lastUpdated,
+        ),
       );
     }
 

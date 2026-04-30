@@ -163,6 +163,7 @@ export function ReaderPanel({
                 manga={manga}
                 page={page}
                 totalPages={chapter.pages}
+                imageUrl={chapter.pageImages?.[page - 1]}
                 paged={mode === "paged"}
               />
             ))}
@@ -204,10 +205,18 @@ interface ComicPageProps {
   manga: Manga;
   page: number;
   totalPages: number;
+  imageUrl?: string;
   paged: boolean;
 }
 
-function ComicPage({ copy, manga, page, totalPages, paged }: ComicPageProps) {
+function ComicPage({
+  copy,
+  manga,
+  page,
+  totalPages,
+  imageUrl,
+  paged,
+}: ComicPageProps) {
   const pageStyle: CSSProperties = {
     background: `linear-gradient(150deg, ${manga.colorFrom}, ${manga.colorTo}), radial-gradient(circle at 70% 12%, rgba(255,255,255,0.34), transparent 22%)`,
   };
@@ -222,32 +231,41 @@ function ComicPage({ copy, manga, page, totalPages, paged }: ComicPageProps) {
       )}
       style={pageStyle}
     >
-      <div className="relative flex h-full min-h-[inherit] flex-col justify-between bg-[linear-gradient(180deg,rgba(2,6,23,0.05),rgba(2,6,23,0.78))] p-5 sm:p-8 md:p-10">
-        <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.28em] text-white/50">
-          <span>{manga.origin}</span>
-          <span>
-            {copy.page} {page}/{totalPages}
-          </span>
-        </div>
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={`${manga.title} ${copy.page} ${page}`}
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="relative flex h-full min-h-[inherit] flex-col justify-between bg-[linear-gradient(180deg,rgba(2,6,23,0.05),rgba(2,6,23,0.78))] p-5 sm:p-8 md:p-10">
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.28em] text-white/50">
+            <span>{manga.origin}</span>
+            <span>
+              {copy.page} {page}/{totalPages}
+            </span>
+          </div>
 
-        <div className="mx-auto grid w-full max-w-md gap-5 py-8 sm:py-12">
-          <div className="h-24 rounded-full border border-white/20 bg-white/10 sm:h-28" />
-          <div className="grid gap-3">
-            <div className="h-3 w-3/4 rounded-full bg-white/70 sm:h-4" />
-            <div className="h-3 w-full rounded-full bg-white/40 sm:h-4" />
-            <div className="h-3 w-2/3 rounded-full bg-white/30 sm:h-4" />
+          <div className="mx-auto grid w-full max-w-md gap-5 py-8 sm:py-12">
+            <div className="h-24 rounded-full border border-white/20 bg-white/10 sm:h-28" />
+            <div className="grid gap-3">
+              <div className="h-3 w-3/4 rounded-full bg-white/70 sm:h-4" />
+              <div className="h-3 w-full rounded-full bg-white/40 sm:h-4" />
+              <div className="h-3 w-2/3 rounded-full bg-white/30 sm:h-4" />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-2xl font-black tracking-tight sm:text-4xl md:text-5xl">
+              {manga.title}
+            </p>
+            <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-white/50">
+              {copy.pages} {totalPages}
+            </p>
           </div>
         </div>
-
-        <div>
-          <p className="text-2xl font-black tracking-tight sm:text-4xl md:text-5xl">
-            {manga.title}
-          </p>
-          <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-white/50">
-            {copy.pages} {totalPages}
-          </p>
-        </div>
-      </div>
+      )}
     </article>
   );
 }

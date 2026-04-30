@@ -5,6 +5,7 @@ import { HeroSpotlight } from "@/features/catalog/components/HeroSpotlight";
 import { RankingPanel } from "@/features/catalog/components/RankingPanel";
 import { MangaDetails } from "@/features/catalog/components/MangaDetails";
 import { mangaCatalog } from "@/features/catalog/data/catalog";
+import { loadMangaCatalog } from "@/features/catalog/api/mangaRepository";
 import { ReaderPanel } from "@/features/reader/components/ReaderPanel";
 import { getCopy } from "@/shared/i18n/translations";
 import { TopNavigation } from "@/shared/layout/TopNavigation";
@@ -15,6 +16,7 @@ export function AppShell() {
   const [view, setView] = useState<View>("home");
   const [locale, setLocale] = useState<Locale>("es");
   const [query, setQuery] = useState("");
+  const [catalog, setCatalog] = useState(mangaCatalog);
   const [selectedMangaId, setSelectedMangaId] = useState(mangaCatalog[0].id);
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
     null,
@@ -26,11 +28,32 @@ export function AppShell() {
     window.scrollTo(0, 0);
   }, [view, selectedMangaId]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    loadMangaCatalog().then((loadedCatalog) => {
+      if (!isMounted || loadedCatalog.length === 0) {
+        return;
+      }
+
+      setCatalog(loadedCatalog);
+      setSelectedMangaId((currentId) =>
+        loadedCatalog.some((manga) => manga.id === currentId)
+          ? currentId
+          : loadedCatalog[0].id,
+      );
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const filteredMangas = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) return mangaCatalog;
+    if (!normalizedQuery) return catalog;
 
-    return mangaCatalog.filter((manga) => {
+    return catalog.filter((manga) => {
       const searchable = [
         manga.title,
         manga.altTitle,
@@ -42,19 +65,24 @@ export function AppShell() {
         .toLowerCase();
       return searchable.includes(normalizedQuery);
     });
-  }, [query]);
+  }, [catalog, query]);
 
   const selectedManga = useMemo(
-    () => mangaCatalog.find((m) => m.id === selectedMangaId) || mangaCatalog[0],
-    [selectedMangaId],
+    () =>
+      catalog.find((m) => m.id === selectedMangaId) ||
+      catalog[0] ||
+      mangaCatalog[0],
+    [catalog, selectedMangaId],
   );
 
   const recentMangas = useMemo(
     () =>
-      [...mangaCatalog].sort((a, b) =>
-        b.chapters[0].updatedAt.localeCompare(a.chapters[0].updatedAt),
+      [...catalog].sort((a, b) =>
+        (b.chapters[0]?.updatedAt ?? b.lastUpdated).localeCompare(
+          a.chapters[0]?.updatedAt ?? a.lastUpdated,
+        ),
       ),
-    [],
+    [catalog],
   );
 
   const handleMangaSelect = (id: string) => {
@@ -91,8 +119,10 @@ export function AppShell() {
             <HeroSpotlight
               copy={copy}
               locale={locale}
-              manga={mangaCatalog[0]}
-              onRead={() => handleMangaSelect(mangaCatalog[0].id)}
+              manga={catalog[0] || mangaCatalog[0]}
+              onRead={() =>
+                handleMangaSelect((catalog[0] || mangaCatalog[0]).id)
+              }
             />
             <div className="mx-auto grid max-w-[1480px] gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 xl:gap-14">
               <div className="space-y-14">
@@ -116,7 +146,7 @@ export function AppShell() {
               <RankingPanel
                 copy={copy}
                 locale={locale}
-                mangas={mangaCatalog}
+                mangas={catalog}
                 onSelect={handleMangaSelect}
               />
             </div>
