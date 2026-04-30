@@ -2,8 +2,6 @@ export type Locale = "es" | "en" | "pt" | "fr" | "ja";
 
 export type ReadMode = "webtoon" | "paged";
 
-export type DimensionPreset = "phone" | "tablet" | "desktop";
-
 export type PublicationState = "ongoing" | "complete";
 
 export type LocalizedText = Record<Locale, string>;

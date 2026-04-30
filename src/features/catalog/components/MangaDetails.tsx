@@ -44,17 +44,17 @@ export function MangaDetails({
 
   return (
     <div className="animate-reader-in">
-      {/* Minimalist floating back button */}
+      {/* Floating back button — rounded rectangle pill */}
       <button
         onClick={onBack}
-        className="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-slate-900/80 text-white shadow-lg ring-1 ring-white/10 backdrop-blur-xl transition hover:bg-slate-800 hover:scale-110 active:scale-95"
+        className="fixed left-4 top-4 z-50 flex h-10 items-center gap-2 rounded-xl bg-slate-900/80 px-4 text-sm font-bold text-slate-200 shadow-lg shadow-black/30 ring-1 ring-white/10 backdrop-blur-xl transition hover:bg-slate-800 hover:text-white active:scale-95 sm:left-5 sm:top-5"
       >
         <svg
-          className="h-5 w-5"
+          className="h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2}
+          strokeWidth={2.2}
         >
           <path
             strokeLinecap="round"
@@ -62,6 +62,7 @@ export function MangaDetails({
             d="M10 19l-7-7m0 0l7-7m-7 7h18"
           />
         </svg>
+        <span className="hidden sm:inline">{copy.back}</span>
       </button>
 
       {/* Hero Background */}
