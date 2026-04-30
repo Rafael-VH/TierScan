@@ -1,4 +1,4 @@
-# PyonManga Reader
+# Tier Scan
 
 Lector web de manga y manhwa construido con React, Vite y Tailwind CSS v4. El proyecto incluye catalogo responsive, busqueda, cambio de idioma, ranking, historial visual y un lector online con modo webtoon o pagina individual.
 

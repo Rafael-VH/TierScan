@@ -12,6 +12,7 @@ interface ReaderPanelProps {
   copy: Copy;
   locale: Locale;
   manga: Manga;
+  initialChapterId?: string;
 }
 
 const readerWidthByPreset: Record<DimensionPreset, string> = {
@@ -20,16 +21,25 @@ const readerWidthByPreset: Record<DimensionPreset, string> = {
   desktop: "max-w-[980px]",
 };
 
-export function ReaderPanel({ copy, locale, manga }: ReaderPanelProps) {
-  const [chapterId, setChapterId] = useState(manga.chapters[0].id);
+export function ReaderPanel({
+  copy,
+  locale,
+  manga,
+  initialChapterId,
+}: ReaderPanelProps) {
+  const [chapterId, setChapterId] = useState(
+    initialChapterId || manga.chapters[0].id,
+  );
   const [mode, setMode] = useState<ReadMode>("webtoon");
   const [screenPreset, setScreenPreset] = useState<DimensionPreset>("desktop");
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    setChapterId(manga.chapters[0].id);
+    if (initialChapterId) {
+      setChapterId(initialChapterId);
+    }
     setCurrentPage(1);
-  }, [manga]);
+  }, [initialChapterId, manga]);
 
   const chapter = useMemo(
     () =>
@@ -49,23 +59,25 @@ export function ReaderPanel({ copy, locale, manga }: ReaderPanelProps) {
   const handleChapterChange = (nextChapterId: string) => {
     setChapterId(nextChapterId);
     setCurrentPage(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const movePage = (direction: -1 | 1) => {
     setCurrentPage((page) =>
       Math.min(chapter.pages, Math.max(1, page + direction)),
     );
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <section id="reader" className="scroll-mt-24">
+    <section id="reader" className="animate-reader-in">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.28em] text-amber-200">
-            {copy.reader}
+            {manga.title}
           </p>
           <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">
-            {copy.onlineReader}
+            {copy.chapter} {chapter.number}: {chapter.title[locale]}
           </h2>
         </div>
         <p className="text-sm font-semibold text-slate-400">

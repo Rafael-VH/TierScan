@@ -1,26 +1,34 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { Locale } from "@/entities/manga/model";
 import { LibraryShelf } from "@/features/catalog/components/LibraryShelf";
 import { HeroSpotlight } from "@/features/catalog/components/HeroSpotlight";
 import { RankingPanel } from "@/features/catalog/components/RankingPanel";
+import { MangaDetails } from "@/features/catalog/components/MangaDetails";
 import { mangaCatalog } from "@/features/catalog/data/catalog";
 import { ReaderPanel } from "@/features/reader/components/ReaderPanel";
 import { getCopy } from "@/shared/i18n/translations";
 import { TopNavigation } from "@/shared/layout/TopNavigation";
 
+type View = "home" | "details" | "reader";
+
 export function AppShell() {
+  const [view, setView] = useState<View>("home");
   const [locale, setLocale] = useState<Locale>("es");
   const [query, setQuery] = useState("");
   const [selectedMangaId, setSelectedMangaId] = useState(mangaCatalog[0].id);
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
+    null,
+  );
 
   const copy = getCopy(locale);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [view, selectedMangaId]);
+
   const filteredMangas = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-
-    if (!normalizedQuery) {
-      return mangaCatalog;
-    }
+    if (!normalizedQuery) return mangaCatalog;
 
     return mangaCatalog.filter((manga) => {
       const searchable = [
@@ -28,33 +36,35 @@ export function AppShell() {
         manga.altTitle,
         manga.author,
         manga.origin,
-        manga.status[locale],
-        manga.synopsis[locale],
         ...manga.genres,
       ]
         .join(" ")
         .toLowerCase();
-
       return searchable.includes(normalizedQuery);
     });
-  }, [locale, query]);
+  }, [query]);
 
-  const selectedManga =
-    mangaCatalog.find((manga) => manga.id === selectedMangaId) ??
-    mangaCatalog[0];
-  const recentMangas = [...mangaCatalog].sort((a, b) =>
-    b.chapters[0].updatedAt.localeCompare(a.chapters[0].updatedAt),
+  const selectedManga = useMemo(
+    () => mangaCatalog.find((m) => m.id === selectedMangaId) || mangaCatalog[0],
+    [selectedMangaId],
   );
 
-  const selectManga = (id: string) => {
+  const recentMangas = useMemo(
+    () =>
+      [...mangaCatalog].sort((a, b) =>
+        b.chapters[0].updatedAt.localeCompare(a.chapters[0].updatedAt),
+      ),
+    [],
+  );
+
+  const handleMangaSelect = (id: string) => {
     setSelectedMangaId(id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setView("details");
   };
 
-  const scrollToSection = (id: string) => {
-    document
-      .getElementById(id)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const handleReadChapter = (chapterId: string) => {
+    setSelectedChapterId(chapterId);
+    setView("reader");
   };
 
   return (
@@ -64,56 +74,95 @@ export function AppShell() {
         locale={locale}
         query={query}
         onLocaleChange={setLocale}
-        onQueryChange={setQuery}
-        onLibraryClick={() => scrollToSection("library")}
-        onReaderClick={() => scrollToSection("reader")}
+        onQueryChange={(q) => {
+          setQuery(q);
+          if (view !== "home") setView("home");
+        }}
+        onLibraryClick={() => setView("home")}
+        onReaderClick={() => {
+          if (view !== "reader") setView("reader");
+        }}
       />
 
-      <main>
-        <HeroSpotlight
-          copy={copy}
-          locale={locale}
-          manga={selectedManga}
-          onRead={() => scrollToSection("reader")}
-        />
-
-        <div className="mx-auto grid max-w-[1480px] gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 xl:gap-14">
-          <div className="space-y-14">
-            <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-slate-300">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-cyan-300/10 text-cyan-200 ring-1 ring-cyan-200/20">
-                AI
-              </span>
-              <p>{copy.announcement}</p>
+      <main className="pt-16">
+        {view === "home" && (
+          <div className="animate-reader-in">
+            <HeroSpotlight
+              copy={copy}
+              locale={locale}
+              manga={mangaCatalog[0]}
+              onRead={() => handleMangaSelect(mangaCatalog[0].id)}
+            />
+            <div className="mx-auto grid max-w-[1480px] gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 xl:gap-14">
+              <div className="space-y-14">
+                <LibraryShelf
+                  copy={copy}
+                  locale={locale}
+                  title={copy.readingHistory}
+                  mangas={filteredMangas}
+                  selectedId={selectedMangaId}
+                  onSelect={handleMangaSelect}
+                />
+                <LibraryShelf
+                  copy={copy}
+                  locale={locale}
+                  title={copy.mostRecent}
+                  mangas={recentMangas}
+                  selectedId={selectedMangaId}
+                  onSelect={handleMangaSelect}
+                />
+              </div>
+              <RankingPanel
+                copy={copy}
+                locale={locale}
+                mangas={mangaCatalog}
+                onSelect={handleMangaSelect}
+              />
             </div>
-
-            <LibraryShelf
-              copy={copy}
-              locale={locale}
-              title={copy.readingHistory}
-              mangas={filteredMangas}
-              selectedId={selectedManga.id}
-              onSelect={selectManga}
-            />
-
-            <LibraryShelf
-              copy={copy}
-              locale={locale}
-              title={copy.mostRecent}
-              mangas={recentMangas}
-              selectedId={selectedManga.id}
-              onSelect={selectManga}
-            />
-
-            <ReaderPanel copy={copy} locale={locale} manga={selectedManga} />
           </div>
+        )}
 
-          <RankingPanel
+        {view === "details" && (
+          <MangaDetails
             copy={copy}
             locale={locale}
-            mangas={mangaCatalog}
-            onSelect={selectManga}
+            manga={selectedManga}
+            onBack={() => setView("home")}
+            onReadChapter={handleReadChapter}
           />
-        </div>
+        )}
+
+        {view === "reader" && (
+          <div className="mx-auto max-w-[1480px] px-4 py-10 sm:px-6 lg:px-8">
+            <button
+              onClick={() => setView("details")}
+              className="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 transition hover:text-white"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Back to Details
+            </button>
+            <ReaderPanel
+              copy={copy}
+              locale={locale}
+              manga={selectedManga}
+              initialChapterId={
+                selectedChapterId || selectedManga.chapters[0].id
+              }
+            />
+          </div>
+        )}
       </main>
     </div>
   );
