@@ -18,9 +18,9 @@ interface MangaDetailsProps {
 }
 
 const columnClasses: Record<ColumnCount, string> = {
-  2: "grid-cols-1 md:grid-cols-2",
-  3: "grid-cols-1 md:grid-cols-2 xl:grid-cols-3",
-  4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+  2: "grid-cols-1 sm:grid-cols-2",
+  3: "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3",
+  4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
 };
 
 export function MangaDetails({
@@ -40,34 +40,26 @@ export function MangaDetails({
   const [columnCount, setColumnCount] = useState<ColumnCount>(3);
 
   const synopsis = manga.synopsis[locale];
-  const isLongSynopsis = synopsis.length > 220;
+  const isLongSynopsis = synopsis.length > 300;
   const displaySynopsis =
     showFullSynopsis || !isLongSynopsis
       ? synopsis
-      : `${synopsis.slice(0, 220)}...`;
+      : `${synopsis.slice(0, 300)}...`;
 
-  const orderedChapters = useMemo(() => {
-    return [...manga.chapters].sort((a, b) =>
-      sortOrder === "desc" ? b.number - a.number : a.number - b.number,
-    );
-  }, [manga.chapters, sortOrder]);
-
-  const metadataItems = [
-    { label: copy.status, value: manga.status[locale] },
-    { label: copy.publication, value: String(manga.year) },
-    { label: copy.type, value: manga.origin },
-    { label: copy.author, value: manga.author },
-    { label: copy.artist, value: manga.artist || manga.author },
-    { label: copy.source, value: manga.source || "-" },
-    { label: copy.scanGroup, value: manga.scanGroup || copy.noGroup },
-    { label: copy.lastUpdated, value: manga.lastUpdated },
-  ];
+  const orderedChapters = useMemo(
+    () =>
+      [...manga.chapters].sort((a, b) =>
+        sortOrder === "desc" ? b.number - a.number : a.number - b.number,
+      ),
+    [manga.chapters, sortOrder],
+  );
 
   return (
     <div className="animate-reader-in min-h-screen bg-[#090e1b]">
+      {/* Back Button */}
       <button
         onClick={onBack}
-        className="fixed left-4 top-4 z-50 flex h-10 items-center gap-2 rounded-xl bg-slate-900/80 px-4 text-sm font-bold text-slate-200 shadow-lg shadow-black/30 ring-1 ring-white/10 backdrop-blur-xl transition hover:bg-slate-800 hover:text-white active:scale-95 sm:left-5 sm:top-5"
+        className="fixed left-4 top-4 z-50 flex h-10 items-center gap-2 rounded-xl bg-slate-900/90 px-4 text-sm font-bold text-slate-200 shadow-lg shadow-black/40 ring-1 ring-white/10 backdrop-blur-xl transition hover:bg-slate-800 hover:text-white active:scale-95"
       >
         <svg
           className="h-4 w-4"
@@ -85,196 +77,243 @@ export function MangaDetails({
         <span className="hidden sm:inline">{copy.back}</span>
       </button>
 
-      <div className="relative h-52 overflow-hidden sm:h-64">
+      {/* Hero Background */}
+      <div className="relative h-40 overflow-hidden sm:h-48">
         <div
-          className="absolute inset-0 opacity-45"
+          className="absolute inset-0 opacity-50"
           style={{
             background: `linear-gradient(135deg, ${manga.colorFrom}, ${manga.colorTo})`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#090e1b] via-[#090e1b]/65 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.08),transparent_52%)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#090e1b] via-[#090e1b]/70 to-transparent" />
       </div>
 
-      <div className="mx-auto -mt-20 max-w-[1420px] px-4 pb-20 sm:px-6 lg:px-8">
-        <section className="relative grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
-          <div className="mx-auto w-40 sm:w-48 lg:mx-0 lg:w-52">
-            <CoverArt manga={manga} />
-          </div>
-
-          <div className="self-end pb-2 text-center lg:text-left">
-            <div className="mb-3 flex flex-wrap justify-center gap-2 lg:justify-start">
-              <span className="rounded-md bg-emerald-400/10 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-emerald-300 ring-1 ring-emerald-400/20">
-                {manga.safety}
-              </span>
-              {[manga.origin, ...manga.genres.slice(0, 5)].map((label) => (
-                <span
-                  key={label}
-                  className="rounded-md bg-white/5 px-2.5 py-1 text-xs font-bold text-slate-300 ring-1 ring-white/10"
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            <h1 className="text-balance text-3xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {manga.title}
-            </h1>
-            <p className="mt-2 text-base font-bold text-slate-400 sm:text-lg">
-              {manga.altTitle}
-            </p>
-
-            <div className="mt-6 grid grid-cols-3 gap-2 sm:max-w-lg lg:max-w-xl">
-              <StatBlock
-                label={copy.rating}
-                value={String(manga.rating)}
-                accent
-              />
-              <StatBlock label={copy.bookmarks} value={manga.bookmarks} />
-              <StatBlock label={copy.views} value={manga.views} />
-            </div>
-          </div>
-        </section>
-
-        <div className="mt-8 grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-            <button
-              onClick={() => onReadChapter(manga.chapters[0].id)}
-              className="w-full rounded-xl bg-amber-300 py-3.5 text-sm font-black uppercase tracking-wider text-slate-950 transition hover:-translate-y-0.5 hover:bg-amber-200 active:translate-y-0"
-            >
-              {copy.startReading}
-            </button>
-            <button className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 text-sm font-black uppercase tracking-wider text-white transition hover:bg-white/[0.08]">
-              {copy.addToLibrary}
-            </button>
-
-            <InfoPanel title={copy.details} items={metadataItems} />
-
-            <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-              <h3 className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                {copy.demographics}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {manga.demographics.map((demo) => (
-                  <span
-                    key={demo}
-                    className="rounded-lg bg-amber-300/10 px-3 py-1.5 text-xs font-bold text-amber-200 ring-1 ring-amber-300/20"
-                  >
-                    {demo}
-                  </span>
-                ))}
+      {/* Main Content Container */}
+      <div className="mx-auto max-w-[1600px] px-4 pb-20 sm:px-6 lg:px-8">
+        {/* HEADER SECTION - Full Width */}
+        <div className="-mt-24 sm:-mt-28">
+          {/* Top Row: Cover + Basic Info + Stats */}
+          <div className="grid gap-6 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr]">
+            {/* LEFT: Cover Image Container */}
+            <div className="mx-auto w-44 sm:mx-0 sm:w-52 lg:w-64">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3 shadow-2xl shadow-black/40">
+                <CoverArt manga={manga} compact />
               </div>
-            </section>
-          </aside>
+            </div>
 
-          <main className="space-y-8">
-            <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
-              <p className="text-base leading-7 text-slate-300">
-                {displaySynopsis}
-              </p>
-              {isLongSynopsis && (
-                <button
-                  onClick={() => setShowFullSynopsis(!showFullSynopsis)}
-                  className="mt-3 text-sm font-black text-amber-300 transition hover:text-amber-200"
-                >
-                  {showFullSynopsis ? copy.showLess : copy.showMore}
-                </button>
-              )}
-            </section>
-
-            <section>
-              <div className="mb-6 flex flex-col gap-4 border-b border-white/10 pb-4 md:flex-row md:items-end md:justify-between">
-                <div className="flex overflow-x-auto scrollbar-soft">
-                  <TabButton
-                    active={activeTab === "chapters"}
-                    onClick={() => setActiveTab("chapters")}
-                  >
-                    {copy.chapters}
-                  </TabButton>
-                  <TabButton
-                    active={activeTab === "comments"}
-                    onClick={() => setActiveTab("comments")}
-                  >
-                    {copy.comments}
-                  </TabButton>
-                  <TabButton
-                    active={activeTab === "recommended"}
-                    onClick={() => setActiveTab("recommended")}
-                  >
-                    {copy.recommended}
-                  </TabButton>
+            {/* RIGHT: Info Container */}
+            <div className="flex flex-col justify-end">
+              {/* Title Container */}
+              <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 backdrop-blur-sm">
+                {/* Genres Row */}
+                <div className="mb-3 flex flex-wrap gap-1.5">
+                  <span className="rounded-md bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-300 ring-1 ring-emerald-400/20">
+                    {manga.safety}
+                  </span>
+                  <span className="rounded-md bg-amber-300/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-200 ring-1 ring-amber-300/20">
+                    {manga.origin}
+                  </span>
+                  {manga.genres.slice(0, 5).map((g) => (
+                    <span
+                      key={g}
+                      className="rounded-md bg-white/5 px-2 py-0.5 text-[10px] font-bold text-slate-300 ring-1 ring-white/10"
+                    >
+                      {g}
+                    </span>
+                  ))}
                 </div>
 
-                {activeTab === "chapters" && (
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="flex rounded-xl border border-white/10 bg-white/[0.04] p-1">
-                      <SmallToggle
-                        active={sortOrder === "desc"}
-                        onClick={() => setSortOrder("desc")}
+                {/* Title */}
+                <h1 className="text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl">
+                  {manga.title}
+                </h1>
+                <p className="mt-1 text-sm font-semibold text-slate-400">
+                  {manga.altTitle}
+                </p>
+
+                {/* Author */}
+                <p className="mt-3 text-xs font-semibold text-slate-500">
+                  {copy.author}:{" "}
+                  <span className="text-slate-300">{manga.author}</span>
+                  {manga.artist && manga.artist !== manga.author && (
+                    <span className="text-slate-300">
+                      {" "}
+                      · {copy.artist}: {manga.artist}
+                    </span>
+                  )}
+                </p>
+
+                {/* Demographics */}
+                {manga.demographics.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {manga.demographics.map((d) => (
+                      <span
+                        key={d}
+                        className="rounded-md bg-slate-700/50 px-2 py-0.5 text-[10px] font-bold text-slate-300"
                       >
-                        Desc
-                      </SmallToggle>
-                      <SmallToggle
-                        active={sortOrder === "asc"}
-                        onClick={() => setSortOrder("asc")}
-                      >
-                        Asc
-                      </SmallToggle>
-                    </div>
-                    <div className="hidden rounded-xl border border-white/10 bg-white/[0.04] p-1 sm:flex">
-                      {[2, 3, 4].map((count) => (
-                        <SmallToggle
-                          key={count}
-                          active={columnCount === count}
-                          onClick={() => setColumnCount(count as ColumnCount)}
-                        >
-                          {count}
-                        </SmallToggle>
-                      ))}
-                    </div>
+                        {d}
+                      </span>
+                    ))}
                   </div>
                 )}
               </div>
 
-              {activeTab === "chapters" && (
-                <div className={cn("grid gap-3", columnClasses[columnCount])}>
-                  {orderedChapters.map((chapter) => (
-                    <ChapterCard
-                      key={chapter.id}
-                      copy={copy}
-                      locale={locale}
-                      manga={manga}
-                      chapter={chapter}
-                      onRead={() => onReadChapter(chapter.id)}
-                    />
+              {/* Stats Container */}
+              <div className="mt-4 grid grid-cols-3 gap-3 sm:max-w-md">
+                <StatCard
+                  label={copy.rating}
+                  value={String(manga.rating)}
+                  accent
+                />
+                <StatCard label={copy.bookmarks} value={manga.bookmarks} />
+                <StatCard label={copy.views} value={manga.views} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* MIDDLE SECTION - Description & Details */}
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          {/* Description Container */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+            <h3 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+              <span className="h-4 w-1 rounded-full bg-amber-300" />
+              {copy.status}
+            </h3>
+            <p className="text-sm leading-7 text-slate-300">
+              {displaySynopsis}
+            </p>
+            {isLongSynopsis && (
+              <button
+                onClick={() => setShowFullSynopsis(!showFullSynopsis)}
+                className="mt-4 text-sm font-black text-amber-300 transition hover:text-amber-200"
+              >
+                {showFullSynopsis ? copy.showLess : copy.showMore}
+              </button>
+            )}
+          </div>
+
+          {/* Details Container */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+            <h3 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+              <span className="h-4 w-1 rounded-full bg-amber-300" />
+              {copy.details}
+            </h3>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <DetailRow label={copy.publication} value={String(manga.year)} />
+              <DetailRow label={copy.type} value={manga.origin} />
+              <DetailRow label={copy.status} value={manga.status[locale]} />
+              <DetailRow
+                label={copy.totalChapters}
+                value={String(manga.totalChapters)}
+              />
+              <DetailRow label={copy.lastUpdated} value={manga.lastUpdated} />
+              <DetailRow label={copy.source} value={manga.source || "-"} />
+              <DetailRow
+                label={copy.scanGroup}
+                value={manga.scanGroup || copy.noGroup}
+              />
+              <DetailRow label="ID" value={manga.slug} />
+            </div>
+          </div>
+        </div>
+
+        {/* BOTTOM SECTION - Tabs & Content */}
+        <div className="mt-10">
+          {/* Tabs Header */}
+          <div className="mb-6 flex flex-col gap-4 border-b border-white/10 pb-4 md:flex-row md:items-end md:justify-between">
+            <div className="flex overflow-x-auto scrollbar-soft">
+              <TabButton
+                active={activeTab === "chapters"}
+                onClick={() => setActiveTab("chapters")}
+              >
+                {copy.chapters}
+              </TabButton>
+              <TabButton
+                active={activeTab === "comments"}
+                onClick={() => setActiveTab("comments")}
+              >
+                {copy.comments}
+              </TabButton>
+              <TabButton
+                active={activeTab === "recommended"}
+                onClick={() => setActiveTab("recommended")}
+              >
+                {copy.recommended}
+              </TabButton>
+            </div>
+
+            {activeTab === "chapters" && (
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex rounded-xl border border-white/10 bg-white/[0.04] p-1">
+                  <SmallToggle
+                    active={sortOrder === "desc"}
+                    onClick={() => setSortOrder("desc")}
+                  >
+                    Desc
+                  </SmallToggle>
+                  <SmallToggle
+                    active={sortOrder === "asc"}
+                    onClick={() => setSortOrder("asc")}
+                  >
+                    Asc
+                  </SmallToggle>
+                </div>
+                <div className="hidden rounded-xl border border-white/10 bg-white/[0.04] p-1 sm:flex">
+                  {([2, 3, 4] as const).map((n) => (
+                    <SmallToggle
+                      key={n}
+                      active={columnCount === n}
+                      onClick={() => setColumnCount(n)}
+                    >
+                      {n}
+                    </SmallToggle>
                   ))}
                 </div>
-              )}
+              </div>
+            )}
+          </div>
 
-              {activeTab === "comments" && (
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
-                  <p className="text-sm font-bold text-slate-500">
-                    {copy.comments} coming soon...
-                  </p>
-                </div>
-              )}
-
-              {activeTab === "recommended" && (
-                <RecommendedGrid
+          {/* Tab Content */}
+          {activeTab === "chapters" && (
+            <div className={cn("grid gap-4", columnClasses[columnCount])}>
+              {orderedChapters.map((ch) => (
+                <ChapterCard
+                  key={ch.id}
                   copy={copy}
-                  mangas={relatedMangas}
-                  onSelect={onSelectManga}
+                  locale={locale}
+                  manga={manga}
+                  chapter={ch}
+                  onRead={() => onReadChapter(ch.id)}
                 />
-              )}
-            </section>
-          </main>
+              ))}
+            </div>
+          )}
+
+          {activeTab === "comments" && (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-12 text-center">
+              <p className="text-sm font-bold text-slate-500">
+                {copy.comments} coming soon...
+              </p>
+            </div>
+          )}
+
+          {activeTab === "recommended" && (
+            <RecommendedGrid
+              copy={copy}
+              mangas={relatedMangas}
+              onSelect={onSelectManga}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function StatBlock({
+/* ---- Helper Components ---- */
+
+function StatCard({
   label,
   value,
   accent = false,
@@ -284,10 +323,10 @@ function StatBlock({
   accent?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center">
+    <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-center transition hover:bg-white/[0.06]">
       <span
         className={cn(
-          "block text-lg font-black",
+          "block text-xl font-black sm:text-2xl",
           accent ? "text-amber-300" : "text-white",
         )}
       >
@@ -300,32 +339,16 @@ function StatBlock({
   );
 }
 
-function InfoPanel({
-  title,
-  items,
-}: {
-  title: string;
-  items: Array<{ label: string; value: string }>;
-}) {
+function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <h3 className="mb-4 text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-        {title}
-      </h3>
-      <dl className="space-y-3">
-        {items.map((item) => (
-          <div
-            key={item.label}
-            className="flex items-start justify-between gap-2 text-sm"
-          >
-            <dt className="font-bold text-slate-500">{item.label}</dt>
-            <dd className="text-right font-semibold text-white">
-              {item.value}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </section>
+    <div className="flex items-center justify-between gap-4 rounded-lg bg-white/[0.02] px-3 py-2.5">
+      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
+        {label}
+      </span>
+      <span className="text-right text-sm font-semibold text-white">
+        {value}
+      </span>
+    </div>
   );
 }
 
@@ -391,35 +414,39 @@ function ChapterCard({
   chapter: Chapter;
   onRead: () => void;
 }) {
-  const languages = chapter.languages?.length
-    ? chapter.languages
-    : manga.languages;
+  const langs = chapter.languages?.length ? chapter.languages : manga.languages;
 
   return (
     <button
       type="button"
       onClick={onRead}
-      className="group grid min-h-32 grid-cols-[92px_minmax(0,1fr)] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] text-left transition hover:-translate-y-0.5 hover:border-amber-300/30 hover:bg-white/[0.06]"
+      className="group flex overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] text-left transition hover:-translate-y-0.5 hover:border-amber-300/30 hover:bg-white/[0.06]"
     >
-      <ChapterThumbnail manga={manga} chapter={chapter} />
-      <div className="flex min-w-0 flex-col justify-between p-4">
+      {/* Thumbnail */}
+      <div className="relative h-28 w-24 shrink-0 overflow-hidden sm:h-32 sm:w-28">
+        <ChapterThumbnail manga={manga} chapter={chapter} />
+      </div>
+
+      {/* Content */}
+      <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-200/80">
-            {copy.chapter}
-          </p>
-          <h3 className="mt-1 truncate text-lg font-black text-white group-hover:text-amber-100">
-            {chapter.number}
-          </h3>
-          <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/80">
+              {copy.chapter}
+            </span>
+            <span className="text-lg font-black text-white group-hover:text-amber-100">
+              {chapter.number}
+            </span>
+          </div>
+          <p className="mt-1 line-clamp-1 text-sm font-semibold text-slate-500">
             {chapter.title[locale]}
           </p>
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-400">
+
+        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-400">
           <span>{chapter.updatedAt}</span>
           <span className="h-1 w-1 rounded-full bg-slate-600" />
-          <span>
-            {languages.map((language) => language.toUpperCase()).join(" / ")}
-          </span>
+          <span>{langs.map((l) => l.toUpperCase()).join(" / ")}</span>
         </div>
       </div>
     </button>
@@ -439,7 +466,7 @@ function ChapterThumbnail({
     return (
       <img
         src={image}
-        alt={`${manga.title} chapter ${chapter.number}`}
+        alt={`Ch. ${chapter.number}`}
         className="h-full w-full object-cover"
         loading="lazy"
       />
@@ -448,13 +475,13 @@ function ChapterThumbnail({
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden"
+      className="relative h-full w-full"
       style={{
         background: `linear-gradient(145deg, ${manga.colorFrom}, ${manga.colorTo})`,
       }}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_20%,rgba(255,255,255,0.45),transparent_18%),linear-gradient(180deg,transparent,rgba(2,6,23,0.72))]" />
-      <span className="absolute bottom-3 left-3 text-2xl font-black text-white drop-shadow-lg">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.3),transparent_50%)]" />
+      <span className="absolute bottom-2 left-2 text-xl font-black text-white drop-shadow-lg">
         {chapter.number}
       </span>
     </div>
@@ -472,7 +499,7 @@ function RecommendedGrid({
 }) {
   if (mangas.length === 0) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-12 text-center">
         <p className="text-sm font-bold text-slate-500">{copy.noResults}</p>
       </div>
     );
@@ -480,23 +507,23 @@ function RecommendedGrid({
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-      {mangas.map((related) => (
+      {mangas.map((m) => (
         <button
-          key={related.id}
+          key={m.id}
           type="button"
-          onClick={() => onSelect(related.id)}
+          onClick={() => onSelect(m.id)}
           className="group text-left"
         >
           <CoverArt
-            manga={related}
+            manga={m}
             compact
             className="transition duration-500 group-hover:-translate-y-1"
           />
           <p className="mt-3 line-clamp-2 text-sm font-black leading-tight text-white group-hover:text-amber-100">
-            {related.title}
+            {m.title}
           </p>
           <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
-            {related.genres.slice(0, 3).join(", ")}
+            {m.genres.slice(0, 3).join(", ")}
           </p>
         </button>
       ))}
