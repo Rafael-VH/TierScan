@@ -67,24 +67,57 @@ export function AppShell() {
     setView("reader");
   };
 
+  const showFullHeader = view === "home";
+
   return (
     <div className="min-h-screen bg-[#090e1b] text-slate-100 selection:bg-amber-300 selection:text-slate-950">
-      <TopNavigation
-        copy={copy}
-        locale={locale}
-        query={query}
-        onLocaleChange={setLocale}
-        onQueryChange={(q) => {
-          setQuery(q);
-          if (view !== "home") setView("home");
-        }}
-        onLibraryClick={() => setView("home")}
-        onReaderClick={() => {
-          if (view !== "reader") setView("reader");
-        }}
-      />
+      {showFullHeader && (
+        <TopNavigation
+          copy={copy}
+          locale={locale}
+          query={query}
+          onLocaleChange={setLocale}
+          onQueryChange={(q) => {
+            setQuery(q);
+            if (view !== "home") setView("home");
+          }}
+          onLibraryClick={() => setView("home")}
+          onReaderClick={() => {
+            setView("reader");
+          }}
+        />
+      )}
 
-      <main className="pt-16">
+      {/* Minimalist header for details/reader */}
+      {!showFullHeader && (
+        <div className="fixed left-0 right-0 top-0 z-40 flex h-14 items-center justify-between px-4 backdrop-blur-xl bg-[#090e1b]/80">
+          <button
+            onClick={() =>
+              view === "details" ? setView("home") : setView("details")
+            }
+            className="flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-bold text-slate-300 transition hover:bg-white/10 hover:text-white"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            {view === "details" ? copy.back : copy.backToDetails}
+          </button>
+          <span className="text-sm font-black text-white">{copy.appName}</span>
+          <div className="w-20" />
+        </div>
+      )}
+
+      <main className={showFullHeader ? "pt-16" : "pt-14"}>
         {view === "home" && (
           <div className="animate-reader-in">
             <HeroSpotlight
@@ -133,26 +166,7 @@ export function AppShell() {
         )}
 
         {view === "reader" && (
-          <div className="mx-auto max-w-[1480px] px-4 py-10 sm:px-6 lg:px-8">
-            <button
-              onClick={() => setView("details")}
-              className="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 transition hover:text-white"
-            >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back to Details
-            </button>
+          <div className="mx-auto max-w-[1480px] px-4 py-6 sm:px-6 lg:px-8">
             <ReaderPanel
               copy={copy}
               locale={locale}
