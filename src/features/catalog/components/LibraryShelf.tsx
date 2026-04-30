@@ -7,6 +7,7 @@ interface LibraryShelfProps {
   copy: Copy;
   locale: Locale;
   title: string;
+  subtitle?: string;
   mangas: Manga[];
   selectedId: string;
   onSelect: (id: string) => void;
@@ -16,21 +17,24 @@ export function LibraryShelf({
   copy,
   locale,
   title,
+  subtitle,
   mangas,
   selectedId,
   onSelect,
 }: LibraryShelfProps) {
   return (
-    <section
-      id={title === copy.readingHistory ? "library" : undefined}
-      className="scroll-mt-24"
-    >
-      <div className="mb-4 flex items-end justify-between gap-4">
+    <section className="scroll-mt-24">
+      <div className="mb-6 flex items-end justify-between gap-4 border-b border-white/10 pb-4">
         <div>
-          <h2 className="text-xl font-black tracking-tight text-white sm:text-2xl">
-            {title}
-          </h2>
-          <p className="mt-1 text-sm text-slate-400">{copy.announcement}</p>
+          <div className="flex items-center gap-3">
+            <span className="block h-6 w-1 rounded-full bg-amber-300" />
+            <h2 className="text-xl font-black tracking-tight text-white sm:text-2xl">
+              {title}
+            </h2>
+          </div>
+          {subtitle && (
+            <p className="mt-2 pl-4 text-sm text-slate-400">{subtitle}</p>
+          )}
         </div>
         <button
           type="button"
@@ -45,7 +49,7 @@ export function LibraryShelf({
           {copy.noResults}
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 sm:gap-x-5 md:grid-cols-4 md:gap-x-6 xl:grid-cols-5 2xl:grid-cols-6">
           {mangas.map((manga) => (
             <button
               key={manga.id}
@@ -66,7 +70,7 @@ export function LibraryShelf({
                 {manga.title}
               </p>
               <p className="mt-1 text-xs font-semibold text-slate-400">
-                {copy.chapter} {manga.chapters[0].number} ·{" "}
+                {copy.chapter} {manga.chapters[0]?.number ?? "—"} ·{" "}
                 {manga.status[locale]}
               </p>
             </button>

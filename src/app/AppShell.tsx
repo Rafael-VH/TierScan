@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from "react";
-import type { Locale } from "@/entities/manga/model";
+import { useEffect, useMemo, useState } from "react";
+import type { Locale, Manga } from "@/entities/manga/model";
 import { LibraryShelf } from "@/features/catalog/components/LibraryShelf";
 import { HeroSpotlight } from "@/features/catalog/components/HeroSpotlight";
 import { RankingPanel } from "@/features/catalog/components/RankingPanel";
@@ -9,13 +9,21 @@ import { loadMangaCatalog } from "@/features/catalog/api/mangaRepository";
 import { ReaderPanel } from "@/features/reader/components/ReaderPanel";
 import { getCopy } from "@/shared/i18n/translations";
 import { TopNavigation } from "@/shared/layout/TopNavigation";
+import { SideDrawer } from "@/shared/layout/SideDrawer";
 
 type View = "home" | "details" | "reader";
+
+interface ActiveFilter {
+  type: "genre" | "origin";
+  value: string;
+}
 
 export function AppShell() {
   const [view, setView] = useState<View>("home");
   const [locale, setLocale] = useState<Locale>("es");
   const [query, setQuery] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter | null>(null);
   const [catalog, setCatalog] = useState(mangaCatalog);
   const [selectedMangaId, setSelectedMangaId] = useState(mangaCatalog[0].id);
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
@@ -30,42 +38,43 @@ export function AppShell() {
 
   useEffect(() => {
     let isMounted = true;
-
-    loadMangaCatalog().then((loadedCatalog) => {
-      if (!isMounted || loadedCatalog.length === 0) {
-        return;
-      }
-
-      setCatalog(loadedCatalog);
-      setSelectedMangaId((currentId) =>
-        loadedCatalog.some((manga) => manga.id === currentId)
-          ? currentId
-          : loadedCatalog[0].id,
+    loadMangaCatalog().then((loaded) => {
+      if (!isMounted || loaded.length === 0) return;
+      setCatalog(loaded);
+      setSelectedMangaId((id) =>
+        loaded.some((m) => m.id === id) ? id : loaded[0].id,
       );
     });
-
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const filteredMangas = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) return catalog;
+  /* ---- filtering ---- */
 
-    return catalog.filter((manga) => {
-      const searchable = [
-        manga.title,
-        manga.altTitle,
-        manga.author,
-        manga.origin,
-        ...manga.genres,
-      ]
-        .join(" ")
-        .toLowerCase();
-      return searchable.includes(normalizedQuery);
-    });
-  }, [catalog, query]);
+  const filteredMangas = useMemo(() => {
+    let items = catalog;
+
+    if (activeFilter) {
+      items = items.filter((m) =>
+        activeFilter.type === "genre"
+          ? m.genres.includes(activeFilter.value)
+          : m.origin === activeFilter.value,
+      );
+    }
+
+    const q = query.trim().toLowerCase();
+    if (q) {
+      items = items.filter((m) =>
+        [m.title, m.altTitle, m.author, m.origin, ...m.genres]
+          .join(" ")
+          .toLowerCase()
+          .includes(q),
+      );
+    }
+
+    return items;
+  }, [catalog, activeFilter, query]);
 
   const selectedManga = useMemo(
     () =>
@@ -77,13 +86,15 @@ export function AppShell() {
 
   const recentMangas = useMemo(
     () =>
-      [...catalog].sort((a, b) =>
+      [...filteredMangas].sort((a, b) =>
         (b.chapters[0]?.updatedAt ?? b.lastUpdated).localeCompare(
           a.chapters[0]?.updatedAt ?? a.lastUpdated,
         ),
       ),
-    [catalog],
+    [filteredMangas],
   );
+
+  /* ---- handlers ---- */
 
   const handleMangaSelect = (id: string) => {
     setSelectedMangaId(id);
@@ -95,6 +106,22 @@ export function AppShell() {
     setView("reader");
   };
 
+  const goHome = () => {
+    setView("home");
+  };
+
+  const handleSelectGenre = (genre: string) => {
+    setActiveFilter({ type: "genre", value: genre });
+    setView("home");
+  };
+
+  const handleSelectOrigin = (origin: Manga["origin"]) => {
+    setActiveFilter({ type: "origin", value: origin });
+    setView("home");
+  };
+
+  const clearFilter = () => setActiveFilter(null);
+
   return (
     <div className="min-h-screen bg-[#090e1b] text-slate-100 selection:bg-amber-300 selection:text-slate-950">
       {view === "home" && (
@@ -102,16 +129,29 @@ export function AppShell() {
           copy={copy}
           locale={locale}
           query={query}
+          catalog={catalog}
           onLocaleChange={setLocale}
-          onQueryChange={(q) => {
-            setQuery(q);
-          }}
-          onLibraryClick={() => setView("home")}
-          onReaderClick={() => {
-            setView("reader");
-          }}
+          onQueryChange={setQuery}
+          onOpenDrawer={() => setDrawerOpen(true)}
+          onHomeClick={goHome}
+          onSelectManga={handleMangaSelect}
         />
       )}
+
+      <SideDrawer
+        open={drawerOpen}
+        copy={copy}
+        locale={locale}
+        catalog={catalog}
+        onClose={() => setDrawerOpen(false)}
+        onLocaleChange={setLocale}
+        onSelectGenre={handleSelectGenre}
+        onSelectOrigin={handleSelectOrigin}
+        onHomeClick={() => {
+          clearFilter();
+          goHome();
+        }}
+      />
 
       <main className={view === "home" ? "pt-16" : ""}>
         {view === "home" && (
@@ -120,12 +160,34 @@ export function AppShell() {
               copy={copy}
               locale={locale}
               manga={catalog[0] || mangaCatalog[0]}
-              onRead={() =>
+              onSelect={() =>
                 handleMangaSelect((catalog[0] || mangaCatalog[0]).id)
               }
             />
-            <div className="mx-auto grid max-w-[1480px] gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 xl:gap-14">
-              <div className="space-y-14">
+
+            <div className="mx-auto grid max-w-[1480px] gap-12 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-14 lg:px-8 xl:gap-16">
+              <div className="space-y-20">
+                {activeFilter && (
+                  <div className="flex items-center justify-between gap-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-5 py-4">
+                    <p className="text-sm font-bold text-amber-100">
+                      <span className="opacity-70">
+                        {activeFilter.type === "genre"
+                          ? copy.genres
+                          : copy.type}
+                        :
+                      </span>{" "}
+                      <span className="font-black">{activeFilter.value}</span>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={clearFilter}
+                      className="rounded-lg border border-amber-200/30 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-amber-100 transition hover:bg-amber-200/10"
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
+
                 <LibraryShelf
                   copy={copy}
                   locale={locale}
@@ -134,6 +196,7 @@ export function AppShell() {
                   selectedId={selectedMangaId}
                   onSelect={handleMangaSelect}
                 />
+
                 <LibraryShelf
                   copy={copy}
                   locale={locale}
@@ -143,6 +206,7 @@ export function AppShell() {
                   onSelect={handleMangaSelect}
                 />
               </div>
+
               <RankingPanel
                 copy={copy}
                 locale={locale}
