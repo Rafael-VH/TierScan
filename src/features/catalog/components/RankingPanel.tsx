@@ -45,16 +45,16 @@ export function RankingPanel({
   }, [activeTab, mangas]);
 
   return (
-    <aside className="lg:sticky lg:top-20 lg:self-start">
-      <div className="border-t border-white/10 pt-4 lg:border-t-0 lg:pt-0">
+    <aside className="md:sticky md:top-16 lg:top-20 lg:self-start">
+      <div className="border-t border-white/10 pt-4 md:border-t-0 md:pt-0 lg:border-t-0 lg:pt-0">
         <div className="mb-4 flex items-center gap-2 overflow-x-auto scrollbar-soft">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                "whitespace-nowrap border-b-2 px-3 py-2 text-sm font-black transition",
+                className={cn(
+                  "whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-black transition",
                 activeTab === tab.id
                   ? "border-amber-300 text-white"
                   : "border-transparent text-slate-400 hover:text-white",
@@ -65,7 +65,7 @@ export function RankingPanel({
           ))}
         </div>
 
-        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+        <ol className="grid gap-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-1">
           {rankedMangas.map((manga, index) => (
             <li key={manga.id}>
               <button

@@ -28,12 +28,12 @@ export function HeroSpotlight({
       <div className="absolute inset-0 -z-10 animate-aurora bg-[radial-gradient(circle_at_70%_12%,rgba(255,255,255,0.16),transparent_20%),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:auto,76px_76px,76px_76px]" />
       <div className="absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-t from-[#090e1b] to-transparent" />
 
-      <div className="mx-auto grid min-h-[560px] max-w-[1480px] items-center gap-8 px-4 pb-20 pt-10 sm:px-6 md:grid-cols-[220px_minmax(0,1fr)] md:pb-24 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-8">
+      <div className="mx-auto grid min-h-[500px] max-w-[1480px] items-center gap-8 px-4 pb-20 pt-10 sm:px-6 sm:min-h-[520px] md:grid-cols-[220px_minmax(0,1fr)] md:pb-24 lg:grid-cols-[260px_minmax(0,1fr)] lg:min-h-[560px] lg:px-8">
         <button
           type="button"
           onClick={onSelect}
           aria-label={manga.title}
-          className="mx-auto block w-44 animate-float-slow transition hover:scale-[1.02] active:scale-[0.98] sm:w-56 md:mx-0 lg:w-64"
+          className="mx-auto block w-44 animate-float-slow transition hover:scale-[1.02] active:scale-[0.98] sm:w-56 md:mx-0 md:w-60 lg:w-64"
         >
           <CoverArt manga={manga} />
         </button>
@@ -42,7 +42,7 @@ export function HeroSpotlight({
           <p className="text-sm font-black uppercase tracking-[0.32em] text-amber-200/90">
             {copy.appName}
           </p>
-          <h1 className="mt-5 max-w-5xl text-balance text-4xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
+          <h1 className="mt-5 max-w-5xl text-balance text-4xl font-black leading-[0.95] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {manga.title}
           </h1>
           <p className="mt-3 text-lg font-semibold text-slate-300">

@@ -88,7 +88,7 @@ npm run dev
 
 El proyecto sigue **Feature-Sliced Design (FSD)**. Cada capa tiene responsabilidades claras:
 
-```
+```text
 src/
 ├── app/                          # App Shell, providers, layout global
 │   ├── AppShell.tsx              # Orquestador principal de vistas
@@ -129,7 +129,7 @@ src/
 
 ### Reglas de dependencias entre capas
 
-```
+```text
 app/        → puede importar de todas las capas
 features/   → puede importar de entities/ y shared/
 shared/     → puede importar de entities/ (solo tipos)
@@ -146,7 +146,7 @@ entities/   → no importa de ninguna capa interna
    - **Error**: Retorna el catalogo local como fallback.
 4. `setCatalog(loaded)` reemplaza los datos locales con los de Supabase.
 
-```
+```text
 AppShell.tsx
   │
   ├── useState(mangaCatalog)          ← Estado inicial: fallback local

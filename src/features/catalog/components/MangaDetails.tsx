@@ -59,7 +59,7 @@ export function MangaDetails({
       {/* Back Button */}
       <button
         onClick={onBack}
-        className="fixed left-4 top-4 z-50 flex h-10 items-center gap-2 rounded-xl bg-slate-900/90 px-4 text-sm font-bold text-slate-200 shadow-lg shadow-black/40 ring-1 ring-white/10 backdrop-blur-xl transition hover:bg-slate-800 hover:text-white active:scale-95"
+        className="fixed left-4 top-4 z-50 flex h-11 items-center gap-2 rounded-xl bg-slate-900/90 px-4 text-sm font-bold text-slate-200 shadow-lg shadow-black/40 ring-1 ring-white/10 backdrop-blur-xl transition hover:bg-slate-800 hover:text-white active:scale-95"
       >
         <svg
           className="h-4 w-4"
@@ -93,9 +93,9 @@ export function MangaDetails({
         {/* HEADER SECTION - Full Width */}
         <div className="-mt-14 sm:-mt-16 lg:-mt-20">
           {/* Top Row: Cover + Basic Info + Stats */}
-          <div className="grid gap-5 lg:grid-cols-[240px_1fr] xl:grid-cols-[280px_1fr]">
+          <div className="grid gap-5 md:grid-cols-[220px_1fr] lg:grid-cols-[240px_1fr] xl:grid-cols-[280px_1fr]">
             {/* LEFT: Cover Image Container */}
-            <div className="mx-auto w-36 sm:mx-0 sm:w-44 lg:w-52 xl:w-56">
+            <div className="mx-auto w-36 sm:mx-0 sm:w-44 md:w-48 lg:w-52 xl:w-56">
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-2.5 shadow-2xl shadow-black/40 sm:p-3">
                 <CoverArt manga={manga} compact />
               </div>
@@ -124,7 +124,7 @@ export function MangaDetails({
                 </div>
 
                 {/* Title */}
-                <h1 className="text-xl font-black leading-tight tracking-tight text-white sm:text-2xl lg:text-3xl">
+                <h1 className="text-xl font-black leading-tight tracking-tight text-white sm:text-2xl md:text-3xl lg:text-3xl">
                   {manga.title}
                 </h1>
                 <p className="mt-1 text-sm font-semibold text-slate-400">
@@ -173,7 +173,7 @@ export function MangaDetails({
         </div>
 
         {/* MIDDLE SECTION - Description & Details */}
-        <div className="mt-6 grid gap-5 lg:grid-cols-2 lg:gap-6">
+        <div className="mt-6 grid gap-5 md:grid-cols-2 md:gap-6 lg:gap-6">
           {/* Description Container */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 lg:p-6">
             <h3 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-slate-500">
@@ -390,7 +390,7 @@ function SmallToggle({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-lg px-3 py-2 text-xs font-black transition",
+        "rounded-lg px-3 py-2.5 text-xs font-black transition",
         active
           ? "bg-amber-300 text-slate-950"
           : "text-slate-400 hover:bg-white/10 hover:text-white",

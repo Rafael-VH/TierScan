@@ -73,7 +73,7 @@ export function TopNavigation({
           type="button"
           aria-label="Open menu"
           onClick={onOpenDrawer}
-          className="grid h-10 w-10 place-items-center rounded-lg text-slate-300 transition hover:bg-white/10 hover:text-white"
+          className="grid h-11 w-11 place-items-center rounded-lg text-slate-300 transition hover:bg-white/10 hover:text-white"
         >
           <svg
             className="h-5 w-5"
@@ -121,7 +121,7 @@ export function TopNavigation({
                 type="button"
                 onClick={() => onQueryChange("")}
                 aria-label="Clear search"
-                className="absolute right-3 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-md text-slate-500 transition hover:bg-white/10 hover:text-white"
+                className="absolute right-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-lg text-slate-500 transition hover:bg-white/10 hover:text-white"
               >
                 <svg
                   className="h-3.5 w-3.5"
@@ -159,7 +159,7 @@ export function TopNavigation({
           type="button"
           aria-label="Search"
           onClick={() => setSearchOpen((v) => !v)}
-          className="ml-auto grid h-9 w-9 place-items-center rounded-lg text-slate-300 transition hover:bg-white/10 hover:text-white md:hidden"
+          className="ml-auto grid h-11 w-11 place-items-center rounded-lg text-slate-300 transition hover:bg-white/10 hover:text-white md:hidden"
         >
           <svg
             className="h-5 w-5"
@@ -179,7 +179,7 @@ export function TopNavigation({
           <select
             value={locale}
             onChange={(e) => onLocaleChange(e.target.value as Locale)}
-            className="h-10 rounded-lg border border-white/10 bg-white/[0.06] px-3 text-sm font-bold text-white outline-none transition focus:border-amber-300/70"
+            className="h-11 rounded-lg border border-white/10 bg-white/[0.06] px-3 text-sm font-bold text-white outline-none transition focus:border-amber-300/70"
           >
             {languages.map((lang) => (
               <option
@@ -219,7 +219,7 @@ export function TopNavigation({
               onChange={(e) => onQueryChange(e.target.value)}
               autoFocus={searchOpen}
               placeholder={copy.searchPlaceholder}
-              className="h-10 w-full rounded-xl border border-white/10 bg-white/[0.06] pl-11 pr-4 text-sm text-white outline-none placeholder:text-slate-500 focus:border-amber-300/60"
+              className="h-11 w-full rounded-xl border border-white/10 bg-white/[0.06] pl-11 pr-4 text-sm text-white outline-none placeholder:text-slate-500 focus:border-amber-300/60"
             />
           </label>
 

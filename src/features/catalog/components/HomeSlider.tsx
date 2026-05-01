@@ -98,7 +98,7 @@ export function HomeSlider({
             <button
               type="button"
               onClick={() => onSelect(activeManga.id)}
-              className="rounded-xl bg-amber-300 px-4 py-2 text-xs font-black uppercase tracking-wide text-slate-950 transition hover:-translate-y-0.5 hover:bg-amber-200 sm:px-5 sm:py-2.5 sm:text-sm"
+              className="rounded-xl bg-amber-300 px-5 py-3 text-sm font-black uppercase tracking-wide text-slate-950 transition hover:-translate-y-0.5 hover:bg-amber-200 sm:px-6 sm:py-3"
             >
               {copy.details}
             </button>

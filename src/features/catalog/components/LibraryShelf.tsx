@@ -28,7 +28,7 @@ export function LibraryShelf({
         <div>
           <div className="flex items-center gap-3">
             <span className="block h-5 w-1 rounded-full bg-amber-300 sm:h-6" />
-            <h2 className="text-lg font-black tracking-tight text-white sm:text-xl lg:text-2xl">
+            <h2 className="text-lg font-black tracking-tight text-white sm:text-xl md:text-2xl lg:text-2xl">
               {title}
             </h2>
           </div>

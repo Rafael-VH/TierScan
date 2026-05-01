@@ -42,7 +42,7 @@ export function CoverArt({ manga, className, compact = false }: CoverArtProps) {
         <p
           className={cn(
             "font-semibold uppercase tracking-[0.22em] text-white/70",
-            compact ? "mt-1 text-[9px]" : "mt-2 text-[10px]",
+            compact ? "mt-1 text-[10px] sm:text-xs" : "mt-2 text-[10px] sm:text-sm",
           )}
         >
           {manga.origin}
@@ -52,7 +52,7 @@ export function CoverArt({ manga, className, compact = false }: CoverArtProps) {
         className={cn(
           "absolute rounded-full bg-black/35 font-bold uppercase tracking-wide text-white/85 backdrop-blur",
           compact
-            ? "left-2 top-2 px-1.5 py-0.5 text-[9px]"
+            ? "left-2 top-2 px-1.5 py-0.5 text-[10px]"
             : "left-3 top-3 px-2 py-1 text-[10px]",
         )}
       >

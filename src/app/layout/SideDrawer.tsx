@@ -78,7 +78,7 @@ export function SideDrawer({
       {/* Drawer */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-[80] flex w-[88%] max-w-sm flex-col bg-[#0b1120] shadow-2xl shadow-black/60 ring-1 ring-white/10 transition-transform duration-300 ease-out",
+          "fixed inset-y-0 left-0 z-[80] flex w-[85%] max-w-sm flex-col bg-[#0b1120] shadow-2xl shadow-black/60 ring-1 ring-white/10 transition-transform duration-300 ease-out md:w-[320px]",
           open ? "translate-x-0" : "-translate-x-full",
         )}
         aria-hidden={!open}
@@ -97,7 +97,7 @@ export function SideDrawer({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="grid h-9 w-9 place-items-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white"
+            className="grid h-11 w-11 place-items-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white"
           >
             <svg
               className="h-5 w-5"
@@ -180,7 +180,7 @@ export function SideDrawer({
                   onSelectOrigin(o);
                   onClose();
                 }}
-                className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs font-black text-slate-200 transition hover:border-amber-300/40 hover:bg-amber-300/10 hover:text-amber-200"
+                className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3 text-sm font-black text-slate-200 transition hover:border-amber-300/40 hover:bg-amber-300/10 hover:text-amber-200"
               >
                 {o}
               </button>
@@ -200,7 +200,7 @@ export function SideDrawer({
                   onSelectGenre(g);
                   onClose();
                 }}
-                className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-bold text-slate-300 transition hover:border-amber-300/40 hover:bg-amber-300/10 hover:text-amber-200"
+                className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm font-bold text-slate-300 transition hover:border-amber-300/40 hover:bg-amber-300/10 hover:text-amber-200"
               >
                 {g}
               </button>
@@ -218,7 +218,7 @@ export function SideDrawer({
                 type="button"
                 onClick={() => onLocaleChange(lang.code)}
                 className={cn(
-                  "rounded-lg px-2 py-2 text-xs font-black transition",
+                  "rounded-lg px-2 py-2.5 text-sm font-black transition",
                   locale === lang.code
                     ? "bg-amber-300 text-slate-950"
                     : "border border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/10",

@@ -133,7 +133,7 @@ export function ReaderPanel({
       {/* ---- Floating back button (top-left, always visible) ---- */}
       <button
         onClick={onBack}
-        className="fixed left-4 top-4 z-[60] flex h-10 items-center gap-2 rounded-xl bg-slate-900/80 px-4 text-sm font-bold text-slate-200 shadow-lg shadow-black/40 ring-1 ring-white/10 backdrop-blur-xl transition hover:bg-slate-800 hover:text-white active:scale-95 sm:left-5 sm:top-5"
+        className="fixed left-4 top-4 z-[60] flex h-11 items-center gap-2 rounded-xl bg-slate-900/80 px-4 text-sm font-bold text-slate-200 shadow-lg shadow-black/40 ring-1 ring-white/10 backdrop-blur-xl transition hover:bg-slate-800 hover:text-white active:scale-95 sm:left-5 sm:top-5"
       >
         <svg
           className="h-4 w-4"
@@ -196,7 +196,7 @@ export function ReaderPanel({
                 {prevChapter && (
                   <button
                     onClick={() => goToChapter(prevChapter)}
-                    className="rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-black text-white transition hover:bg-white/10"
+                    className="rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-black text-white transition hover:bg-white/10"
                   >
                     ← {copy.previous}
                   </button>
@@ -204,7 +204,7 @@ export function ReaderPanel({
                 {nextChapter && (
                   <button
                     onClick={() => goToChapter(nextChapter)}
-                    className="rounded-xl bg-amber-300 px-5 py-2.5 text-sm font-black text-slate-950 transition hover:bg-amber-200"
+                    className="rounded-xl bg-amber-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-200"
                   >
                     {copy.next} →
                   </button>
@@ -232,7 +232,7 @@ export function ReaderPanel({
                 type="button"
                 onClick={() => movePage(-1)}
                 disabled={currentPage === 1}
-                className="rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-black text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                className="rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-black text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
               >
                 {copy.previous}
               </button>
@@ -243,7 +243,7 @@ export function ReaderPanel({
                 type="button"
                 onClick={() => movePage(1)}
                 disabled={currentPage === chapter.pages}
-                className="rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-black text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                className="rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-black text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
               >
                 {copy.next}
               </button>
@@ -267,7 +267,7 @@ export function ReaderPanel({
           <select
             value={chapterId}
             onChange={(e) => handleChapterChange(e.target.value)}
-            className="h-10 min-w-0 flex-1 truncate rounded-xl border border-white/10 bg-white/[0.06] px-3 text-xs font-bold text-white outline-none transition focus:border-amber-300/60 sm:text-sm"
+            className="h-11 min-w-0 flex-1 truncate rounded-xl border border-white/10 bg-white/[0.06] px-3 text-sm font-bold text-white outline-none transition focus:border-amber-300/60"
           >
             {manga.chapters.map((c) => (
               <option key={c.id} value={c.id} className="bg-slate-950">
@@ -289,7 +289,7 @@ export function ReaderPanel({
                 showToolbar();
               }}
               className={cn(
-                "flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-black transition",
+                "flex h-11 items-center gap-1.5 rounded-lg px-3 text-xs font-black transition",
                 mode === "webtoon"
                   ? "bg-amber-300 text-slate-950"
                   : "text-slate-400 hover:bg-white/10 hover:text-white",
@@ -317,7 +317,7 @@ export function ReaderPanel({
                 showToolbar();
               }}
               className={cn(
-                "flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-black transition",
+                "flex h-11 items-center gap-1.5 rounded-lg px-3 text-xs font-black transition",
                 mode === "paged"
                   ? "bg-amber-300 text-slate-950"
                   : "text-slate-400 hover:bg-white/10 hover:text-white",
