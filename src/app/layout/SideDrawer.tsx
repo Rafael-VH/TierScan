@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import type { Locale, Manga, SpotlightMode } from "@/entities/manga/model";
 import type { Copy } from "@/shared/i18n/translations";
 import { languages } from "@/shared/i18n/translations";
-import { cn } from "@/utils/cn";
+import { cn } from "@/shared/utils/cn";
 
 interface SideDrawerProps {
   open: boolean;

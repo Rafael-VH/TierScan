@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { Locale, Manga, PublicationState } from "@/entities/manga/model";
 import type { Copy } from "@/shared/i18n/translations";
 import { CoverArt } from "@/shared/components/CoverArt";
-import { cn } from "@/utils/cn";
+import { cn } from "@/shared/utils/cn";
 
 interface RankingPanelProps {
   copy: Copy;

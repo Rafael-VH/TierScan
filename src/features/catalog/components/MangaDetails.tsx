@@ -2,7 +2,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import type { Chapter, Locale, Manga } from "@/entities/manga/model";
 import type { Copy } from "@/shared/i18n/translations";
 import { CoverArt } from "@/shared/components/CoverArt";
-import { cn } from "@/utils/cn";
+import { cn } from "@/shared/utils/cn";
 
 type SortOrder = "desc" | "asc";
 type ColumnCount = 2 | 3 | 4;

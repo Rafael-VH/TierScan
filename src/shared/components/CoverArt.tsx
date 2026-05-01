@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Manga } from "@/entities/manga/model";
-import { cn } from "@/utils/cn";
+import { cn } from "@/shared/utils/cn";
 
 interface CoverArtProps {
   manga: Manga;

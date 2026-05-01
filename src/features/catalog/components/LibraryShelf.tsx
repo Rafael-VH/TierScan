@@ -1,7 +1,7 @@
 import type { Locale, Manga } from "@/entities/manga/model";
 import type { Copy } from "@/shared/i18n/translations";
 import { CoverArt } from "@/shared/components/CoverArt";
-import { cn } from "@/utils/cn";
+import { cn } from "@/shared/utils/cn";
 
 interface LibraryShelfProps {
   copy: Copy;

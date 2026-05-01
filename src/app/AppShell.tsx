@@ -8,8 +8,8 @@ import { mangaCatalog } from "@/features/catalog/data/catalog";
 import { loadMangaCatalog } from "@/features/catalog/api/mangaRepository";
 import { ReaderPanel } from "@/features/reader/components/ReaderPanel";
 import { getCopy } from "@/shared/i18n/translations";
-import { TopNavigation } from "@/shared/layout/TopNavigation";
-import { SideDrawer } from "@/shared/layout/SideDrawer";
+import { TopNavigation } from "@/app/layout/TopNavigation";
+import { SideDrawer } from "@/app/layout/SideDrawer";
 
 type View = "home" | "details" | "reader";
 

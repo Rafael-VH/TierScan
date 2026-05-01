@@ -1,6 +1,6 @@
 # Tier Scan
 
-Lector web de manga, manhwa y manhua construido con React, Vite, TypeScript, Tailwind CSS v4 y soporte para Supabase. La app puede leer datos reales desde Supabase y, si no hay variables de entorno configuradas o ocurre un error, usa automaticamente el catalogo local de demostracion.
+Lector web de manga, manhwa y manhua construido con React, Vite, TypeScript, Tailwind CSS v4 y Supabase. La app lee datos reales desde una base de datos remota en Supabase y, si no hay variables de entorno configuradas o ocurre un error, usa automaticamente el catalogo local de demostracion como fallback.
 
 ## Caracteristicas
 
@@ -10,7 +10,11 @@ Lector web de manga, manhwa y manhua construido con React, Vite, TypeScript, Tai
 - Lector online con modo webtoon y modo por pagina.
 - Carga de manga y capitulos desde Supabase mediante `@supabase/supabase-js`.
 - Fallback local en `src/features/catalog/data/catalog.ts` para desarrollo offline.
-- Arquitectura limpia por capas: `app`, `entities`, `features`, `shared` y `utils`.
+- Arquitectura Feature-Sliced Design (FSD) con capas: `app`, `entities`, `features`, `shared`.
+- Base de datos remota en Supabase con 8 mangas y 24 capitulos precargados.
+- Row Level Security (RLS) configurado con politicas de lectura publica y escritura.
+- Storage bucket para alojamiento de imagenes de capitulos.
+- Documentacion completa en `docs/` con guias de configuracion, migraciones y troubleshooting.
 
 ## Stack
 
@@ -18,23 +22,52 @@ Lector web de manga, manhwa y manhua construido con React, Vite, TypeScript, Tai
 - Vite 7
 - TypeScript
 - Tailwind CSS v4
-- Supabase JavaScript Client
+- Supabase JavaScript Client (`@supabase/supabase-js`)
+- clsx + tailwind-merge (utilidades de clases CSS)
 
 ## Configuracion
 
-1. Crea un proyecto en Supabase.
-2. Ejecuta el SQL de la seccion `SQL para Supabase`.
-3. Copia `.env.example` a `.env.local`.
-4. Coloca tus credenciales publicas de Supabase.
+### 1. Variables de entorno
+
+Copia el archivo de ejemplo y agrega tus credenciales de Supabase:
 
 ```bash
 cp .env.example .env.local
 ```
 
 ```env
-VITE_SUPABASE_URL=https://your-project-ref.supabase.co
-VITE_SUPABASE_ANON_KEY=your-public-anon-or-publishable-key
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-anon-key-aqui
 ```
+
+> **Nota:** `.env.local` esta excluido de git. Nunca commitees credenciales reales.
+
+### 2. Configurar Supabase
+
+Si es un proyecto nuevo, ejecuta los siguientes pasos:
+
+#### a) Inicializar y vincular proyecto
+
+```bash
+supabase init
+supabase link --project-ref <tu-project-ref>
+```
+
+#### b) Aplicar migraciones
+
+```bash
+supabase db push
+```
+
+Esto crea las tablas `manga_titles` y `manga_chapters` con indices, constraints y politicas RLS.
+
+#### c) Poblar la base de datos (seed)
+
+Crea un script de seeding o importa datos desde el dashboard de Supabase. Ver `docs/05-seed-database.md` para ejemplos.
+
+#### d) Crear bucket de storage
+
+Desde el dashboard: **Storage → New Bucket → `chapter-pages` (public)**.
 
 ## Como ejecutar
 
@@ -45,256 +78,210 @@ npm run dev
 
 ## Scripts
 
-- `npm run dev`: inicia el servidor de desarrollo.
-- `npm run build`: genera la version de produccion.
-- `npm run preview`: sirve localmente la version compilada.
+| Comando           | Descripcion                           |
+| ----------------- | ------------------------------------- |
+| `npm run dev`     | Inicia el servidor de desarrollo      |
+| `npm run build`   | Genera la version de produccion       |
+| `npm run preview` | Sirve localmente la version compilada |
 
-## Estructura
+## Arquitectura
 
-```text
+El proyecto sigue **Feature-Sliced Design (FSD)**. Cada capa tiene responsabilidades claras:
+
+```
 src/
-  app/
-    AppShell.tsx
-  entities/
-    manga/
-      model.ts
-  features/
-    catalog/
-      api/
-        mangaRepository.ts
-      components/
-        HeroSpotlight.tsx
-        LibraryShelf.tsx
-        MangaDetails.tsx
-        RankingPanel.tsx
-      data/
-        catalog.ts
-    reader/
-      components/
-        ReaderPanel.tsx
-  shared/
-    api/
-      supabaseClient.ts
-    components/
-      CoverArt.tsx
-    i18n/
-      translations.ts
-    layout/
-      TopNavigation.tsx
-  utils/
-    cn.ts
+├── app/                          # App Shell, providers, layout global
+│   ├── AppShell.tsx              # Orquestador principal de vistas
+│   └── layout/                   # Componentes de layout especificos de la app
+│       ├── TopNavigation.tsx     # Barra de navegacion superior
+│       └── SideDrawer.tsx        # Menu lateral deslizable
+│
+├── entities/                     # Modelos de dominio (sin UI, sin API)
+│   └── manga/
+│       └── model.ts              # Tipos: Manga, Chapter, Locale, etc.
+│
+├── features/                     # Funcionalidades con UI y logica de negocio
+│   ├── catalog/                  # Feature: catalogo de mangas
+│   │   ├── api/
+│   │   │   └── mangaRepository.ts  # Data access layer (Supabase + fallback)
+│   │   ├── components/
+│   │   │   ├── HeroSpotlight.tsx   # Slider destacado
+│   │   │   ├── HomeSlider.tsx      # Slider principal
+│   │   │   ├── LibraryShelf.tsx    # Estante de mangas
+│   │   │   ├── MangaDetails.tsx    # Vista de detalle
+│   │   │   └── RankingPanel.tsx    # Panel de ranking
+│   │   └── data/
+│   │       └── catalog.ts          # Catalogo local de fallback (8 mangas)
+│   └── reader/                   # Feature: lector de capitulos
+│       └── components/
+│           └── ReaderPanel.tsx     # Lector con modo webtoon/pagina
+│
+└── shared/                       # Codigo reutilizable entre features
+    ├── api/
+    │   └── supabaseClient.ts     # Singleton de Supabase con config check
+    ├── components/
+    │   └── CoverArt.tsx          # Componente de portada reutilizable
+    ├── i18n/
+    │   └── translations.ts       # Traducciones en 5 idiomas
+    └── utils/
+        └── cn.ts                 # Utility para clases CSS (clsx + twMerge)
+```
+
+### Reglas de dependencias entre capas
+
+```
+app/        → puede importar de todas las capas
+features/   → puede importar de entities/ y shared/
+shared/     → puede importar de entities/ (solo tipos)
+entities/   → no importa de ninguna capa interna
 ```
 
 ## Flujo de datos
 
-- `src/shared/api/supabaseClient.ts` crea el cliente de Supabase si existen variables de entorno.
-- `src/features/catalog/api/mangaRepository.ts` consulta `manga_titles` junto con `manga_chapters`.
-- El repositorio transforma los nombres snake_case de Supabase al modelo interno en camelCase.
-- Si Supabase no esta configurado, retorna `mangaCatalog` desde `src/features/catalog/data/catalog.ts`.
+1. `AppShell.tsx` inicializa el estado con el catalogo local (`mangaCatalog`).
+2. `useEffect` llama a `loadMangaCatalog()` del repositorio.
+3. `mangaRepository.ts` verifica si Supabase esta configurado:
+   - **Si**: Consulta `manga_titles` con `manga_chapters(*)` y transforma los datos.
+   - **No**: Retorna el catalogo local como fallback.
+   - **Error**: Retorna el catalogo local como fallback.
+4. `setCatalog(loaded)` reemplaza los datos locales con los de Supabase.
 
-## Tablas de Supabase
-
-La app usa dos tablas principales:
-
-- `manga_titles`: informacion general del manga/manhwa/manhua.
-- `manga_chapters`: capitulos relacionados a cada manga.
-
-### SQL para Supabase
-
-Ejecuta este script en el SQL Editor de Supabase.
-
-```sql
-create extension if not exists pgcrypto;
-
-create table if not exists public.manga_titles (
-  id uuid primary key default gen_random_uuid(),
-  slug text not null unique,
-  title text not null,
-  alt_title text,
-  author text not null,
-  artist text,
-  origin text not null check (origin in ('Manga', 'Manhwa', 'Manhua')),
-  year integer not null check (year >= 1900),
-  state text not null check (state in ('ongoing', 'complete')),
-  status jsonb not null default '{"es":"En emision","en":"Ongoing","pt":"Em lancamento","fr":"En cours","ja":"Renzoku chu"}'::jsonb,
-  safety text not null default 'Safe',
-  genres text[] not null default '{}',
-  demographics text[] not null default '{}',
-  languages text[] not null default '{es}',
-  synopsis jsonb not null default '{}'::jsonb,
-  color_from text not null default '#0f172a',
-  color_to text not null default '#334155',
-  accent text not null default '#fbbf24',
-  ranking integer not null default 999,
-  reads text not null default '0',
-  rating numeric(2,1) not null default 0 check (rating >= 0 and rating <= 5),
-  rating_count text not null default '0',
-  bookmarks text not null default '0',
-  views text not null default '0',
-  total_chapters integer not null default 0,
-  last_updated date not null default current_date,
-  source text,
-  scan_group text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists public.manga_chapters (
-  id uuid primary key default gen_random_uuid(),
-  manga_id uuid not null references public.manga_titles(id) on delete cascade,
-  number numeric(8,2) not null,
-  title jsonb not null default '{}'::jsonb,
-  pages integer not null default 1 check (pages > 0),
-  page_images text[] not null default '{}',
-  progress integer not null default 0 check (progress >= 0 and progress <= 100),
-  updated_at date not null default current_date,
-  created_at timestamptz not null default now(),
-  unique (manga_id, number)
-);
-
-create index if not exists manga_titles_ranking_idx on public.manga_titles (ranking asc);
-create index if not exists manga_titles_slug_idx on public.manga_titles (slug);
-create index if not exists manga_chapters_manga_number_idx on public.manga_chapters (manga_id, number desc);
-
-alter table public.manga_titles enable row level security;
-alter table public.manga_chapters enable row level security;
-
-create policy "Public read manga titles"
-on public.manga_titles
-for select
-to anon, authenticated
-using (true);
-
-create policy "Public read manga chapters"
-on public.manga_chapters
-for select
-to anon, authenticated
-using (true);
+```
+AppShell.tsx
+  │
+  ├── useState(mangaCatalog)          ← Estado inicial: fallback local
+  │
+  └── useEffect()
+        │
+        └── loadMangaCatalog()
+              │
+              ├── isSupabaseConfigured?
+              │     ├── NO  → return mangaCatalog (local)
+              │     └── YES → supabase.from("manga_titles").select("*, manga_chapters(*)")
+              │                   ├── error? → return mangaCatalog (local)
+              │                   ├── empty? → return mangaCatalog (local)
+              │                   └── success → mapManga(row) → Manga[]
+              │
+              └── setCatalog(loaded)      ← Reemplaza si Supabase OK
 ```
 
-## Estructura JSON esperada
+## Base de datos Supabase
 
-Supabase devuelve las filas como JSON. La consulta principal usa esta forma:
+### Tablas
+
+| Tabla            | Filas | Descripcion                                        |
+| ---------------- | ----- | -------------------------------------------------- |
+| `manga_titles`   | 8     | Informacion general del manga/manhwa/manhua        |
+| `manga_chapters` | 24    | Capitulos relacionados a cada manga (3 por titulo) |
+
+### Esquema resumido
+
+#### `manga_titles`
+
+| Columna                                            | Tipo         | Nota                       |
+| -------------------------------------------------- | ------------ | -------------------------- |
+| `id`                                               | uuid         | PK, auto-generado          |
+| `slug`                                             | text         | UNIQUE                     |
+| `title`, `alt_title`                               | text         |                            |
+| `author`, `artist`                                 | text         |                            |
+| `origin`                                           | text         | CHECK: Manga/Manhwa/Manhua |
+| `year`                                             | integer      | CHECK >= 1900              |
+| `state`                                            | text         | CHECK: ongoing/complete    |
+| `status`, `synopsis`                               | jsonb        | Localizacion multi-idioma  |
+| `genres`, `demographics`, `languages`              | text[]       |                            |
+| `ranking`, `reads`, `rating`, `views`, `bookmarks` | various      | Metricas                   |
+| `total_chapters`, `last_updated`                   | integer/date |                            |
+
+#### `manga_chapters`
+
+| Columna                | Tipo           | Nota                           |
+| ---------------------- | -------------- | ------------------------------ |
+| `id`                   | uuid           | PK                             |
+| `manga_id`             | uuid           | FK → manga_titles(id), CASCADE |
+| `number`               | numeric(8,2)   |                                |
+| `title`                | jsonb          | Localizado                     |
+| `pages`, `page_images` | integer/text[] | URLs de paginas                |
+| `progress`             | integer        | 0-100%                         |
+
+### Politicas RLS
+
+| Tabla            | Operacion            | Acceso                        |
+| ---------------- | -------------------- | ----------------------------- |
+| `manga_titles`   | SELECT               | anon, authenticated (publico) |
+| `manga_titles`   | INSERT/UPDATE/DELETE | anon (para desarrollo/seed)   |
+| `manga_chapters` | SELECT               | anon, authenticated (publico) |
+| `manga_chapters` | INSERT/UPDATE/DELETE | anon (para desarrollo/seed)   |
+
+### Consulta principal
 
 ```ts
 supabase
   .from("manga_titles")
-  .select("*, manga_chapters(*)")
+  .select("*, manga_chapters(*)")  // eager-load hijos
   .order("ranking", { ascending: true });
 ```
 
-### JSON de `manga_titles`
+### Storage
 
-```json
-{
-  "id": "7ef7a19b-f99a-49dc-b920-74d1a9cf8a90",
-  "slug": "mizu-zokusei",
-  "title": "Mizu Zokusei no Mahoutsukai",
-  "alt_title": "Water Attribute Magician",
-  "author": "Kubo Tadashi",
-  "artist": "Bokutengou",
-  "origin": "Manga",
-  "year": 2024,
-  "state": "ongoing",
-  "status": {
-    "es": "En emision",
-    "en": "Ongoing",
-    "pt": "Em lancamento",
-    "fr": "En cours",
-    "ja": "Renzoku chu"
-  },
-  "safety": "Safe",
-  "genres": ["Adventure", "Magic", "Fantasy", "Isekai"],
-  "demographics": ["Shonen"],
-  "languages": ["es", "en", "fr"],
-  "synopsis": {
-    "es": "Un mago de agua explora ruinas hundidas mientras protege a una aprendiz.",
-    "en": "A water mage explores sunken ruins while protecting an apprentice.",
-    "pt": "Um mago da agua explora ruinas submersas enquanto protege uma aprendiz.",
-    "fr": "Un mage de l'eau explore des ruines englouties en protegeant une apprentie.",
-    "ja": "Mizu no mahotsukai ga shizunda iseki wo aruku."
-  },
-  "color_from": "#0ea5e9",
-  "color_to": "#a855f7",
-  "accent": "#38bdf8",
-  "ranking": 7,
-  "reads": "980K",
-  "rating": 4.5,
-  "rating_count": "8.3K",
-  "bookmarks": "22.1K",
-  "views": "1.2M",
-  "total_chapters": 13,
-  "last_updated": "2026-01-16",
-  "source": "AlphaPolis",
-  "scan_group": "PyonScans"
-}
-```
+| Bucket          | Acceso | Uso                              |
+| --------------- | ------ | -------------------------------- |
+| `chapter-pages` | public | Imagenes de paginas de capitulos |
 
-### JSON de `manga_chapters`
+Estructura de ruta: `chapter-pages/{manga-slug}/ch{number}/{page}.webp`
 
-```json
-{
-  "id": "db3fe8ca-c65e-4a72-9d38-028bfa31f44f",
-  "manga_id": "7ef7a19b-f99a-49dc-b920-74d1a9cf8a90",
-  "number": 13,
-  "title": {
-    "es": "Resonancia",
-    "en": "Resonance",
-    "pt": "Ressonancia",
-    "fr": "Resonance",
-    "ja": "Resonance"
-  },
-  "pages": 3,
-  "page_images": [
-    "https://cdn.example.com/mizu-zokusei/013/001.webp",
-    "https://cdn.example.com/mizu-zokusei/013/002.webp",
-    "https://cdn.example.com/mizu-zokusei/013/003.webp"
-  ],
-  "progress": 0,
-  "updated_at": "2026-01-16"
-}
-```
+> **Nota:** El bucket `chapter-pages` debe crearse manualmente desde el dashboard de Supabase.
 
-## CSV para cargar nuevos mangas
+## Migraciones
 
-Puedes importar CSV desde el Table Editor de Supabase. Para columnas `jsonb` usa JSON escapado dentro de comillas. Para columnas `text[]` puedes usar formato de arreglo de Postgres como `{Action,Fantasy}`.
+Las migraciones estan versionadas en `supabase/migrations/`:
 
-### CSV para `manga_titles`
+| Migracion                | Contenido                                    |
+| ------------------------ | -------------------------------------------- |
+| `001_initial_schema.sql` | Tablas, indices, constraints, RLS habilitado |
+| `002_write_policies.sql` | Politicas de escritura para anon             |
+| `003_storage_bucket.sql` | Configuracion de bucket de storage           |
 
-```csv
-slug,title,alt_title,author,artist,origin,year,state,status,safety,genres,demographics,languages,synopsis,color_from,color_to,accent,ranking,reads,rating,rating_count,bookmarks,views,total_chapters,last_updated,source,scan_group
-mizu-zokusei,Mizu Zokusei no Mahoutsukai,Water Attribute Magician,Kubo Tadashi,Bokutengou,Manga,2024,ongoing,"{""es"":""En emision"",""en"":""Ongoing"",""pt"":""Em lancamento"",""fr"":""En cours"",""ja"":""Renzoku chu""}",Safe,"{Adventure,Magic,Fantasy,Isekai}","{Shonen}","{es,en,fr}","{""es"":""Un mago de agua explora ruinas hundidas."",""en"":""A water mage explores sunken ruins."",""pt"":""Um mago da agua explora ruinas submersas."",""fr"":""Un mage de l'eau explore des ruines englouties."",""ja"":""Mizu no mahotsukai ga shizunda iseki wo aruku.""}",#0ea5e9,#a855f7,#38bdf8,7,980K,4.5,8.3K,22.1K,1.2M,13,2026-01-16,AlphaPolis,PyonScans
-```
+## Documentacion
 
-### CSV para `manga_chapters`
+Guia completa disponible en `docs/`:
 
-Primero necesitas el `id` del manga en `manga_titles`. Puedes obtenerlo con:
+| Archivo                             | Contenido                                 |
+| ----------------------------------- | ----------------------------------------- |
+| `docs/README.md`                    | Indice de documentacion                   |
+| `docs/01-cli-tools-verification.md` | Instalacion de GitHub CLI y Supabase CLI  |
+| `docs/02-supabase-project-init.md`  | Vinculacion de proyectos y estructura     |
+| `docs/03-schema-migrations.md`      | Creacion de tablas, columnas, migraciones |
+| `docs/04-rls-policies.md`           | Row Level Security y patrones de acceso   |
+| `docs/05-seed-database.md`          | Scripts de seeding (Node.js, CSV, SQL)    |
+| `docs/06-storage-bucket.md`         | Buckets, politicas, subida de archivos    |
+| `docs/07-remote-connection.md`      | Variables de entorno, cliente, fallback   |
+| `docs/08-troubleshooting.md`        | Errores comunes y soluciones              |
+| `docs/09-quick-reference.md`        | Comandos, templates, referencia rapida    |
 
-```sql
-select id, slug from public.manga_titles order by title;
-```
+## Catalogo de ejemplo
 
-Luego usa ese `id` como `manga_id`.
+El proyecto incluye 8 mangas precargados en la base de datos remota:
 
-```csv
-manga_id,number,title,pages,page_images,progress,updated_at
-7ef7a19b-f99a-49dc-b920-74d1a9cf8a90,13,"{""es"":""Resonancia"",""en"":""Resonance"",""pt"":""Ressonancia"",""fr"":""Resonance"",""ja"":""Resonance""}",3,"{https://cdn.example.com/mizu-zokusei/013/001.webp,https://cdn.example.com/mizu-zokusei/013/002.webp,https://cdn.example.com/mizu-zokusei/013/003.webp}",0,2026-01-16
-```
+| #   | Titulo                                 | Origen | Capitulos | Estado   |
+| --- | -------------------------------------- | ------ | --------- | -------- |
+| 1   | Watashi no Hatsukoi wa Hazukashisugite | Manga  | 12        | Ongoing  |
+| 2   | Nano Machine Reboot                    | Manhwa | 138       | Ongoing  |
+| 3   | Eleceed Current                        | Manhwa | 26        | Ongoing  |
+| 4   | Fukuu na Ossan no Kekkaijutsu          | Manga  | 11        | Ongoing  |
+| 5   | Onikirimaru                            | Manga  | 55        | Complete |
+| 6   | Dragon Soul Archives                   | Manga  | 43        | Complete |
+| 7   | Mizu Zokusei no Mahoutsukai            | Manga  | 13        | Ongoing  |
+| 8   | Record of the Kings                    | Manhwa | 21        | Complete |
 
-## Notas sobre imagenes de capitulos
+## Roadmap
 
-- `page_images` contiene las URLs de las paginas del capitulo en orden.
-- Si `page_images` esta vacio, el lector muestra paginas generadas de demostracion.
-- Puedes alojar imagenes en Supabase Storage, Cloudflare R2, S3 o cualquier CDN publico.
-- Si usas Supabase Storage, crea un bucket publico o firma URLs desde un backend antes de enviarlas al cliente.
-
-## Roadmap sugerido
-
-- Persistir progreso real de lectura por usuario.
-- Agregar autenticacion y biblioteca privada.
-- Crear un panel admin para subir mangas, capitulos e imagenes.
-- Agregar rutas con React Router para compartir enlaces directos.
-- Agregar busqueda remota con filtros en Supabase.
+- [ ] Persistir progreso real de lectura por usuario
+- [ ] Agregar autenticacion y biblioteca privada
+- [ ] Crear panel admin para subir mangas, capitulos e imagenes
+- [ ] Agregar rutas con React Router para enlaces directos
+- [ ] Agregar busqueda remota con filtros en Supabase
+- [ ] Implementar carga real de imagenes al bucket de storage
+- [ ] Agregar tests unitarios y de integracion
 
 ## Licencia
 

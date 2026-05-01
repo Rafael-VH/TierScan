@@ -8,7 +8,7 @@ import {
 } from "react";
 import type { Locale, Manga, ReadMode } from "@/entities/manga/model";
 import type { Copy } from "@/shared/i18n/translations";
-import { cn } from "@/utils/cn";
+import { cn } from "@/shared/utils/cn";
 
 interface ReaderPanelProps {
   copy: Copy;
